@@ -1273,6 +1273,34 @@ PrefabInstance:
       propertyPath: lance
       value: 
       objectReference: {fileID: 4293103555023884096, guid: 4d03a2dbecdfe6d4fb344994561ba767, type: 3}
+    - target: {fileID: 3223916395753559884, guid: e8012036fa7e15a4a87935f596cbf933, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3223916395753559884, guid: e8012036fa7e15a4a87935f596cbf933, type: 3}
+      propertyPath: minJumpForce
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 3223916395753559884, guid: e8012036fa7e15a4a87935f596cbf933, type: 3}
+      propertyPath: airLinearDrag
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3528946773272117120, guid: e8012036fa7e15a4a87935f596cbf933, type: 3}
+      propertyPath: m_Size.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3528946773272117120, guid: e8012036fa7e15a4a87935f596cbf933, type: 3}
+      propertyPath: m_Size.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3528946773272117120, guid: e8012036fa7e15a4a87935f596cbf933, type: 3}
+      propertyPath: m_Offset.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3528946773272117120, guid: e8012036fa7e15a4a87935f596cbf933, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.36
+      objectReference: {fileID: 0}
     - target: {fileID: 5152903944479363109, guid: e8012036fa7e15a4a87935f596cbf933, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

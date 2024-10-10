@@ -5,43 +5,43 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [Header("PARAMETERS")]
-    [SerializeField] float speed;
-    [SerializeField] float maxSpeed;
+    [SerializeField] float speed; // Horizontal movement speed
+    [SerializeField] float maxSpeed; // Maximum horizontal speed limit
 
-    [SerializeField] float minJumpForce;
-    [SerializeField] float maxJumpForce;
+    [SerializeField] float minJumpForce; // Minimum jump force when the jump is triggered
+    [SerializeField] float maxJumpForce; // Maximum jump force for dynamic jumping
 
-    [SerializeField] float terrainFriction;
+    [SerializeField] float terrainFriction; // Friction applied when on ground
 
-    [SerializeField] float groundLinearDrag;
-    [SerializeField] float airLinearDrag;
+    [SerializeField] float groundLinearDrag; // Linear drag applied when grounded
+    [SerializeField] float airLinearDrag; // Linear drag applied when in the air
 
-    [SerializeField] float checkGroundRadius;
+    [SerializeField] float checkGroundRadius; // Radius for checking if the player is touching the ground
 
-    [SerializeField] float coyoteTime = 0.2f;
+    [SerializeField] float coyoteTime = 0.2f; // Time allowed to jump after leaving the ground (coyote time)
 
-    [SerializeField] float inputBufferTime = 0.2f;
+    [SerializeField] float inputBufferTime = 0.2f; // Time allowed to buffer the jump input before landing
 
-    [SerializeField] LayerMask groundLayer;
+    [SerializeField] LayerMask groundLayer; // Defines what is considered as ground
 
     [Header("CHECKERS")]
-    [SerializeField] bool isTouchingGround = false;
-    [SerializeField] bool hasLances = true;
+    [SerializeField] bool isTouchingGround = false; // Boolean to check if the player is grounded
+    [SerializeField] bool hasLances = true; // Example flag, not used in movement logic
 
     [Header("REFERENCES IN SCENE")]
-    [SerializeField] SpriteRenderer spriteRenderer;
-    [SerializeField] Transform checkGround;
+    [SerializeField] SpriteRenderer spriteRenderer; // Reference to the player's sprite renderer
+    [SerializeField] Transform checkGround; // Transform to check if player is grounded
 
-    [Header("REFERENCES IN PROYECT")]
-    [SerializeField] GameObject lance;
+    [Header("REFERENCES IN PROJECT")]
+    [SerializeField] GameObject lance; // Example reference, not used in movement logic
 
 
-    private Rigidbody2D rb2D;
+    private Rigidbody2D rb2D; // Rigidbody2D component reference
 
-    private bool playerIsLookingLeft = false;
+    private bool playerIsLookingLeft = false; // Tracks the direction the player is facing
 
-    private float coyoteTimeCounter;
-    private float inputBufferCounter;
+    private float coyoteTimeCounter; // Counter to track the remaining coyote time
+    private float inputBufferCounter; // Counter to track the remaining input buffer time
 
     // Inputs
     private float horizontalInput;
@@ -92,6 +92,12 @@ public class Player : MonoBehaviour
         {
             coyoteTimeCounter -= Time.fixedDeltaTime;
         }
+
+        //Extra fall speed
+        if (rb2D.velocity.y < 0)
+        {
+            rb2D.velocity += Vector2.up * Physics2D.gravity.y * 1.5f * Time.deltaTime;
+        }
     }
 
     private void Move()
@@ -140,7 +146,7 @@ public class Player : MonoBehaviour
     private IEnumerator HandleDynamicJump()
     {
         float jumpTime = 0f;
-        float jumpDuration = 0.2f;  // Duration for dynamic jump control
+        float jumpDuration = 0.3f;  // Duration for dynamic jump control
 
         // Continue adding jump force while jump button is held
         while (Input.GetButton("Jump") && jumpTime < jumpDuration)
