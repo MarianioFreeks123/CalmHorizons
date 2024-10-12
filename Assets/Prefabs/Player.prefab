@@ -312,7 +312,6 @@ GameObject:
   - component: {fileID: 82690317674795264}
   - component: {fileID: 6050420824487390221}
   - component: {fileID: 3528946773272117120}
-  - component: {fileID: 8865260945919144034}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -365,8 +364,8 @@ MonoBehaviour:
     m_Bits: 64
   - serializedVersion: 2
     m_Bits: 256
-  isTouchingGround: 0
-  playerIsLookingLeft: 0
+  isTouchingGround: 1
+  playerIsLookingLeft: 1
   spriteRenderer: {fileID: 2981870418032306103}
   checkGround: {fileID: 3967452805852627463}
 --- !u!114 &82690317674795264
@@ -454,34 +453,3 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.3, y: 1}
   m_EdgeRadius: 0
---- !u!114 &8865260945919144034
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8582153757524786623}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e83d1c2a3061ca5489ef8a8bb47e7a4a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 100
-  maxSpeed: 125
-  minJumpForce: 12
-  maxJumpForce: 20
-  terrainFriction: 0.65
-  groundLinearDrag: 4
-  airLinearDrag: 10
-  checkGroundRadius: 0.22
-  coyoteTime: 0.1
-  inputBufferTime: 0.2
-  jumpLayers:
-  - serializedVersion: 2
-    m_Bits: 64
-  - serializedVersion: 2
-    m_Bits: 256
-  isTouchingGround: 1
-  playerIsLookingLeft: 1
-  spriteRenderer: {fileID: 2981870418032306103}
-  checkGround: {fileID: 3967452805852627463}
