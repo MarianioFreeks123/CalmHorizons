@@ -2,46 +2,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     [Header("PARAMETERS")]
-    [SerializeField] float speed; // Horizontal movement speed
-    [SerializeField] float maxSpeed; // Maximum horizontal speed limit
+    [SerializeField] float speed;
+    [SerializeField] float maxSpeed;
+    [SerializeField] float minJumpForce;
+    [SerializeField] float maxJumpForce;
+    [SerializeField] float terrainFriction;
+    [SerializeField] float groundLinearDrag;
+    [SerializeField] float airLinearDrag;
+    [SerializeField] float checkGroundRadius;
+    [SerializeField] float coyoteTime = 0.2f;
+    [SerializeField] float inputBufferTime = 0.2f;
 
-    [SerializeField] float minJumpForce; // Minimum jump force when the jump is triggered
-    [SerializeField] float maxJumpForce; // Maximum jump force for dynamic jumping
-
-    [SerializeField] float terrainFriction; // Friction applied when on ground
-
-    [SerializeField] float groundLinearDrag; // Linear drag applied when grounded
-    [SerializeField] float airLinearDrag; // Linear drag applied when in the air
-
-    [SerializeField] float checkGroundRadius; // Radius for checking if the player is touching the ground
-
-    [SerializeField] float coyoteTime = 0.2f; // Time allowed to jump after leaving the ground (coyote time)
-
-    [SerializeField] float inputBufferTime = 0.2f; // Time allowed to buffer the jump input before landing
-
-    [SerializeField] LayerMask groundLayer; // Defines what is considered as ground
+    [SerializeField] LayerMask[] jumpLayers;
 
     [Header("CHECKERS")]
-    [SerializeField] bool isTouchingGround = false; // Boolean to check if the player is grounded
-    [SerializeField] bool hasLances = true; // Example flag, not used in movement logic
+    [SerializeField] bool isTouchingGround = false;
+    public bool playerIsLookingLeft = false;
 
     [Header("REFERENCES IN SCENE")]
-    [SerializeField] SpriteRenderer spriteRenderer; // Reference to the player's sprite renderer
-    [SerializeField] Transform checkGround; // Transform to check if player is grounded
+    [SerializeField] SpriteRenderer spriteRenderer;
+    [SerializeField] Transform checkGround;
 
-    [Header("REFERENCES IN PROJECT")]
-    [SerializeField] GameObject lance; // Example reference, not used in movement logic
+    private Rigidbody2D rb2D; 
 
-
-    private Rigidbody2D rb2D; // Rigidbody2D component reference
-
-    private bool playerIsLookingLeft = false; // Tracks the direction the player is facing
-
-    private float coyoteTimeCounter; // Counter to track the remaining coyote time
-    private float inputBufferCounter; // Counter to track the remaining input buffer time
+    private float coyoteTimeCounter;
+    private float inputBufferCounter;
 
     // Inputs
     private float horizontalInput;
@@ -179,8 +167,11 @@ public class Player : MonoBehaviour
     // Check if the player is grounded
     private void CheckGround()
     {
-        // Check if the player is touching the ground by overlapping a circle at the checkGround position
-        isTouchingGround = Physics2D.OverlapCircle(checkGround.position, checkGroundRadius, groundLayer);
+        // Create a LayerMask variable that combines the layers at index 0 and 1
+        LayerMask combinedJumpLayers = jumpLayers[0] | jumpLayers[1];
+
+        // Check if the ground is being touched using the combined layers
+        isTouchingGround = Physics2D.OverlapCircle(checkGround.position, checkGroundRadius, combinedJumpLayers);
     }
 
     private void OnDrawGizmos()
