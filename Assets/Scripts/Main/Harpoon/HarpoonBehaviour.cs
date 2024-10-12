@@ -6,10 +6,16 @@ public class HarpoonBehaviour : MonoBehaviour
 {
     [Header("PARAMETERS")]
     [SerializeField] private float harpoonSpeed;
+    [SerializeField] private float bounceMomentumDuration;
+    [SerializeField] private float bounceForce;
 
     [Header("CHECKERS")]
-    [SerializeField] bool hasCollidedWithTerrain;
+    [SerializeField] private bool hasCollidedWithTerrain;
+    [SerializeField] private bool isInBounceMomentum = false;
     public int harpoonIndexInTheManager;
+
+    [Header("REFERENCES IN SCENE")]
+    [SerializeField] private SpriteRenderer spriteRenderer;
 
     private Rigidbody2D rb;
     private PlayerMovement playerMovement;
@@ -28,6 +34,9 @@ public class HarpoonBehaviour : MonoBehaviour
 
         //Assign the position of the harpoon in the harpoon manager index
         harpoonIndexInTheManager = HarpoonManager.instance.nextHarpoonForShoot - 1;
+
+        //DEBUG [CAN BE DELEATED]
+        spriteRenderer.color = new Color(Random.value, Random.value, Random.value);
     }
 
     private void Update()
@@ -52,6 +61,9 @@ public class HarpoonBehaviour : MonoBehaviour
             hasCollidedWithTerrain = true;
             rb.bodyType = RigidbodyType2D.Static;
             this.gameObject.layer = LayerMask.NameToLayer("AnchoredHarpoon");
+
+            //Start bounce momentum
+            StartCoroutine(BounceMomentum());
         }
 
         //COLLISION WITH OTHER HARPOONS
@@ -88,5 +100,18 @@ public class HarpoonBehaviour : MonoBehaviour
             Destroy(gameObject);
             HarpoonManager.instance.DestroyHarpoon(harpoonIndexInTheManager);
         }
+    }
+
+    private IEnumerator BounceMomentum()
+    {
+        //DEBUG [CAN BE DELEATED]
+        Color previousColor = spriteRenderer.color;
+        spriteRenderer.color = Color.yellow;
+        isInBounceMomentum = true;
+
+        yield return new WaitForSeconds(bounceMomentumDuration);
+
+        isInBounceMomentum = false;
+        spriteRenderer.color = previousColor;
     }
 }

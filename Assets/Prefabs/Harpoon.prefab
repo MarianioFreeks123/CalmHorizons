@@ -112,9 +112,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7828a96d7ad6624d8a66e6129f17b08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  harpoonSpeed: 15
+  harpoonSpeed: 4
+  bounceMomentumDuration: 0
+  bounceForce: 0
   hasCollidedWithTerrain: 0
+  isInBounceMomentum: 0
   harpoonIndexInTheManager: 0
+  spriteRenderer: {fileID: 5377671167159117990}
 --- !u!50 &-1360734672534494742
 Rigidbody2D:
   serializedVersion: 4
@@ -216,7 +220,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

@@ -929,13 +929,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5868dec2feb59d4b8c68faf6477c62d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxNumberOfHarpoons: 5
   harpoon: {fileID: 4293103555023884096, guid: 4d03a2dbecdfe6d4fb344994561ba767, type: 3}
-  harpoons:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  harpoons: []
   nextHarpoonForShoot: 0
 --- !u!4 &1481672850
 Transform:
@@ -1448,10 +1444,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 88281297}
     m_Modifications:
-    - target: {fileID: 3223916395753559884, guid: e8012036fa7e15a4a87935f596cbf933, type: 3}
-      propertyPath: jumpLayers.Array.data[1].m_Bits
-      value: 256
-      objectReference: {fileID: 0}
     - target: {fileID: 5152903944479363109, guid: e8012036fa7e15a4a87935f596cbf933, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

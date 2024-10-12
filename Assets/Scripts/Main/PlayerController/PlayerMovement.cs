@@ -19,8 +19,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] LayerMask[] jumpLayers;
 
     [Header("CHECKERS")]
-    [SerializeField] bool isTouchingGround = false;
-    public bool playerIsLookingLeft = false;
+    [SerializeField]private bool isTouchingGround = false;
+    public bool playerIsLookingLeft = false;    
 
     [Header("REFERENCES IN SCENE")]
     [SerializeField] SpriteRenderer spriteRenderer;
