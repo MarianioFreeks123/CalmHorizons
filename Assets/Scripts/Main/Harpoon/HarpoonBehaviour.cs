@@ -16,7 +16,7 @@ public class HarpoonBehaviour : MonoBehaviour
 
     [Header("REFERENCES IN SCENE")]
     [SerializeField] private SpriteRenderer spriteRenderer;
-
+    
     private Rigidbody2D rb;
     private PlayerMovement playerMovement;
     private BoxCollider boxCollider;
@@ -78,6 +78,14 @@ public class HarpoonBehaviour : MonoBehaviour
                 HarpoonManager.instance.DestroyHarpoon(harpoonIndexInTheManager);
             }
         }
+
+        //PLAYER BOUNCE
+        if (collision.transform.CompareTag("Player") && isInBounceMomentum)
+        {
+            Debug.Log("Ha reobotado");
+            Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
+            playerRb.AddForce(Vector2.up * bounceForce, ForceMode2D.Impulse);
+        }
     }
 
     //Void used for knowing the state of the harpoon
@@ -105,8 +113,9 @@ public class HarpoonBehaviour : MonoBehaviour
     private IEnumerator BounceMomentum()
     {
         //DEBUG [CAN BE DELEATED]
-        Color previousColor = spriteRenderer.color;
+        Color previousColor = spriteRenderer.color;        
         spriteRenderer.color = Color.yellow;
+
         isInBounceMomentum = true;
 
         yield return new WaitForSeconds(bounceMomentumDuration);

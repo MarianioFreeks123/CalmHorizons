@@ -88,8 +88,8 @@ PlatformEffector2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4293103555023884096}
-  m_Enabled: 1
-  m_UseColliderMask: 1
+  m_Enabled: 0
+  m_UseColliderMask: 0
   m_ColliderMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -113,8 +113,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   harpoonSpeed: 4
-  bounceMomentumDuration: 0
-  bounceForce: 0
+  bounceMomentumDuration: 4
+  bounceForce: 20
   hasCollidedWithTerrain: 0
   isInBounceMomentum: 0
   harpoonIndexInTheManager: 0
