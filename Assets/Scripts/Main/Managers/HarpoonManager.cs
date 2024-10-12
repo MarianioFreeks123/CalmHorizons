@@ -46,7 +46,8 @@ public class HarpoonManager : MonoBehaviour
             harpoons.RemoveAt(0);
         } 
 
-        GameObject harpoonShooted =  Instantiate(harpoon, shootPoint.position, Quaternion.identity);
+        GameObject harpoonShooted = Instantiate(harpoon, shootPoint.position, Quaternion.identity);
+        harpoonShooted.transform.parent = GameObject.Find("*NC*_HarpoonParent").transform;
         harpoons.Add(harpoonShooted);
         amountOfHarpoons = harpoons.Count;
     }

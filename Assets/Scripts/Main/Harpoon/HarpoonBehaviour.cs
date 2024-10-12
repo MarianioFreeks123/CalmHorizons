@@ -42,5 +42,20 @@ public class HarpoonBehaviour : MonoBehaviour
             rb.bodyType = RigidbodyType2D.Static;
             this.gameObject.layer = LayerMask.NameToLayer("AnchoredHarpoon");
         }
+
+        //Destroy the anchored harpoon who collide (Only if its moving)
+        if (collision.transform.CompareTag("Harpoon") && !hasCollided)
+        {
+            if (collision.transform.GetComponent<HarpoonBehaviour>().isHarpoonAnchored())
+            {
+                Destroy(collision.transform);
+            }
+        }
+    }
+
+    //Void used for knowing the state of the harpoon
+    public bool isHarpoonAnchored()
+    {
+        return hasCollided;
     }
 }
