@@ -6,13 +6,16 @@ public class HarpoonManager : MonoBehaviour
 {
     public static HarpoonManager instance;
 
+    [Header("PARAMETERS")]
+    [SerializeField] int maxNumberOfHarpoons;
+
     [Header("REFERENCES IN PROYECT")]
     [SerializeField] private GameObject harpoon;
 
     [Header("CHECKERS")]
-    [SerializeField] private List<GameObject> harpoons = new List<GameObject>();
+    [SerializeField] private List<GameObject> harpoons = new List<GameObject>(); //Need to start with 
+    public int nextHarpoonForShoot;
 
-    private int amountOfHarpoons;
     private Transform shootPoint; 
     private HarpoonLauncher harpoonLauncher;
 
@@ -25,6 +28,12 @@ public class HarpoonManager : MonoBehaviour
         }
 
         else instance = this;
+
+        //Assign harpoons empty spaces to the list size
+        for (int i = 0; i < maxNumberOfHarpoons; i++)
+        {
+            harpoons.Add(null);
+        }
     }
 
     void Start()
@@ -39,22 +48,36 @@ public class HarpoonManager : MonoBehaviour
 
     private void FireHarpoon()
     {
-        //Get the oldest harpoon if there are five in scene and delete
-        if (amountOfHarpoons == 5)
-        {
-            Destroy(harpoons[0]);
-            harpoons.RemoveAt(0);
-        } 
-
+        //Reset the counter when the maximun number of harpoons is reached
+        if (nextHarpoonForShoot > maxNumberOfHarpoons - 1) nextHarpoonForShoot = 0;
+        
+        //Instantiate the harpoon
         GameObject harpoonShooted = Instantiate(harpoon, shootPoint.position, Quaternion.identity);
         harpoonShooted.transform.parent = GameObject.Find("*NC*_HarpoonParent").transform;
-        harpoons.Add(harpoonShooted);
-        amountOfHarpoons = harpoons.Count;
+
+        if (harpoons[nextHarpoonForShoot] != null) Destroy(harpoons[nextHarpoonForShoot]);
+        harpoons[nextHarpoonForShoot] = harpoonShooted;
+
+        //Change the name of the harpoon for debug settings
+        harpoonShooted.name = $"harpoon{nextHarpoonForShoot}";
+
+        //Update the harpoon index
+        nextHarpoonForShoot++;
     }
 
     private void OnDisable()
     {
         //Des-subscribe shoot event
         harpoonLauncher.ShootHarpoon -= FireHarpoon;
+    }
+
+    public void DestroyHarpoon(int harpoonToRemove)
+    {
+        harpoons.RemoveAt(harpoonToRemove);
+
+        //Update the index
+        nextHarpoonForShoot--;
+
+        harpoons.Add(null);
     }
 }

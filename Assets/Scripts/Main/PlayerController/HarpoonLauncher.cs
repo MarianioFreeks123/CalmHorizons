@@ -10,7 +10,6 @@ public class HarpoonLauncher : MonoBehaviour
     [Header("PARAMETERS")]
     [SerializeField] private float shootCadence;    
 
-    private int numberOfHarpoons;
     private bool canShoot = true;
 
     void Update()

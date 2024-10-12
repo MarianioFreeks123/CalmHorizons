@@ -930,7 +930,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   harpoon: {fileID: 4293103555023884096, guid: 4d03a2dbecdfe6d4fb344994561ba767, type: 3}
-  harpoons: []
+  harpoons:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  nextHarpoonForShoot: 0
 --- !u!4 &1481672850
 Transform:
   m_ObjectHideFlags: 0

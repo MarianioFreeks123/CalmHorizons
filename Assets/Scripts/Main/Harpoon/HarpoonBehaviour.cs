@@ -8,7 +8,8 @@ public class HarpoonBehaviour : MonoBehaviour
     [SerializeField] private float harpoonSpeed;
 
     [Header("CHECKERS")]
-    [SerializeField] bool hasCollided;
+    [SerializeField] bool hasCollidedWithTerrain;
+    public int harpoonIndexInTheManager;
 
     private Rigidbody2D rb;
     private PlayerMovement playerMovement;
@@ -24,31 +25,45 @@ public class HarpoonBehaviour : MonoBehaviour
 
         //Decide direction depending of the player looking direction
         direction = playerMovement.playerIsLookingLeft ? new Vector2(-1, 0) : new Vector2(1, 0);
+
+        //Assign the position of the harpoon in the harpoon manager index
+        harpoonIndexInTheManager = HarpoonManager.instance.nextHarpoonForShoot - 1;
+    }
+
+    private void Update()
+    {
+        //Destroy the harpoon when cross camera limits
+        DestroyHarpoonIfCrossCameraLimits();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
         //Move if not collides with a wall
-        if(!hasCollided) rb.velocity = new Vector2 (direction.x * harpoonSpeed, 0);
+        if(!hasCollidedWithTerrain) rb.velocity = new Vector2 (direction.x * harpoonSpeed, 0);
     }
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
+        //COLLISION WITH TERRAIN
         //Change the behaviour of the harpoon to one anchored
         if (collision.transform.CompareTag("Terrain"))
         {
-            hasCollided = true;
+            hasCollidedWithTerrain = true;
             rb.bodyType = RigidbodyType2D.Static;
             this.gameObject.layer = LayerMask.NameToLayer("AnchoredHarpoon");
         }
 
+        //COLLISION WITH OTHER HARPOONS
         //Destroy the anchored harpoon who collide (Only if its moving)
-        if (collision.transform.CompareTag("Harpoon") && !hasCollided)
+        if (collision.transform.CompareTag("Harpoon") && !hasCollidedWithTerrain)
         {
-            if (collision.transform.GetComponent<HarpoonBehaviour>().isHarpoonAnchored())
+            HarpoonBehaviour destroyedHarpoonBehaviour = collision.transform.GetComponent<HarpoonBehaviour>();
+
+            if (destroyedHarpoonBehaviour.isHarpoonAnchored())
             {
-                Destroy(collision.transform);
+                Destroy(gameObject);
+                HarpoonManager.instance.DestroyHarpoon(harpoonIndexInTheManager);
             }
         }
     }
@@ -56,6 +71,22 @@ public class HarpoonBehaviour : MonoBehaviour
     //Void used for knowing the state of the harpoon
     public bool isHarpoonAnchored()
     {
-        return hasCollided;
+        return hasCollidedWithTerrain;
+    }
+
+    private void DestroyHarpoonIfCrossCameraLimits()
+    {
+        // Obtener la cámara principal
+        Camera cam = Camera.main;
+
+        // Convertir la posición del objeto a coordenadas de la vista de la cámara
+        Vector3 viewportPosition = cam.WorldToViewportPoint(transform.position);
+
+        // Comprobar si el objeto está fuera de los límites de la cámara
+        if (viewportPosition.x < 0 || viewportPosition.x > 1 || viewportPosition.y < 0 || viewportPosition.y > 1)
+        {
+            Destroy(gameObject);
+            HarpoonManager.instance.DestroyHarpoon(harpoonIndexInTheManager);
+        }
     }
 }
