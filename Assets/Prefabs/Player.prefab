@@ -89,7 +89,7 @@ Transform:
   m_GameObject: {fileID: 4758489148542040992}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.003, y: 0.26, z: 0}
+  m_LocalPosition: {x: 0, y: -0.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -105,6 +105,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6122624925906965199}
   - component: {fileID: 2981870418032306103}
+  - component: {fileID: 7755031198809701814}
+  - component: {fileID: 1863170470057083932}
   m_Layer: 3
   m_Name: PlayerSprite
   m_TagString: Untagged
@@ -168,7 +170,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 3351748369286481944, guid: 4dffe6eab57ca4e4ba2f967307bd1c29, type: 3}
+  m_Sprite: {fileID: -643958239, guid: 111986e129ac3004fbc7f66de6ecfdb4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -179,6 +181,40 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7755031198809701814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5546051771442906916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e536c82f2cdcefa47b39253f36583b69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerMovement: {fileID: 3223916395753559884}
+--- !u!95 &1863170470057083932
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5546051771442906916}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e8833c301dd13674d9f757ce524b1185, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5973091311141579551
 GameObject:
   m_ObjectHideFlags: 0
@@ -205,7 +241,7 @@ Transform:
   m_GameObject: {fileID: 5973091311141579551}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.09200001, z: 0}
+  m_LocalPosition: {x: 0, y: -0.411, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -276,6 +312,7 @@ GameObject:
   - component: {fileID: 82690317674795264}
   - component: {fileID: 6050420824487390221}
   - component: {fileID: 3528946773272117120}
+  - component: {fileID: 8865260945919144034}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -313,14 +350,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e83d1c2a3061ca5489ef8a8bb47e7a4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 150
-  maxSpeed: 7
-  minJumpForce: 14
-  maxJumpForce: 40
+  speed: 100
+  maxSpeed: 125
+  minJumpForce: 12
+  maxJumpForce: 20
   terrainFriction: 0.65
   groundLinearDrag: 4
-  airLinearDrag: 0.4
-  checkGroundRadius: 0.25
+  airLinearDrag: 10
+  checkGroundRadius: 0.22
   coyoteTime: 0.1
   inputBufferTime: 0.2
   jumpLayers:
@@ -404,7 +441,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.36}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.45761597, y: 0.06519315}
@@ -415,5 +452,36 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.3, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &8865260945919144034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8582153757524786623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e83d1c2a3061ca5489ef8a8bb47e7a4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 100
+  maxSpeed: 125
+  minJumpForce: 12
+  maxJumpForce: 20
+  terrainFriction: 0.65
+  groundLinearDrag: 4
+  airLinearDrag: 10
+  checkGroundRadius: 0.22
+  coyoteTime: 0.1
+  inputBufferTime: 0.2
+  jumpLayers:
+  - serializedVersion: 2
+    m_Bits: 64
+  - serializedVersion: 2
+    m_Bits: 256
+  isTouchingGround: 1
+  playerIsLookingLeft: 1
+  spriteRenderer: {fileID: 2981870418032306103}
+  checkGround: {fileID: 3967452805852627463}

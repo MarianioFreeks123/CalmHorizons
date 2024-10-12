@@ -17,16 +17,15 @@ public class HarpoonBehaviour : MonoBehaviour
     [Header("REFERENCES IN SCENE")]
     [SerializeField] private SpriteRenderer spriteRenderer;
     
-    private Rigidbody2D rb;
+    private Rigidbody2D _rb;
     private PlayerMovement playerMovement;
-    private BoxCollider boxCollider;
-    
+
     private Vector2 direction;
 
     void Start()
     {
         //Assign references
-        rb = GetComponent<Rigidbody2D>();
+        _rb = GetComponent<Rigidbody2D>();
         playerMovement = GameObject.Find("*NC*_Player").GetComponent<PlayerMovement>();
 
         //Decide direction depending of the player looking direction
@@ -49,7 +48,7 @@ public class HarpoonBehaviour : MonoBehaviour
     void FixedUpdate()
     {
         //Move if not collides with a wall
-        if(!hasCollidedWithTerrain) rb.velocity = new Vector2 (direction.x * harpoonSpeed, 0);
+        if(!hasCollidedWithTerrain) _rb.velocity = new Vector2 (direction.x * harpoonSpeed, 0);
     }
 
     public void OnCollisionEnter2D(Collision2D collision)
@@ -59,7 +58,7 @@ public class HarpoonBehaviour : MonoBehaviour
         if (collision.transform.CompareTag("Terrain"))
         {
             hasCollidedWithTerrain = true;
-            rb.bodyType = RigidbodyType2D.Static;
+            _rb.bodyType = RigidbodyType2D.Static;
             this.gameObject.layer = LayerMask.NameToLayer("AnchoredHarpoon");
 
             //Start bounce momentum
@@ -82,8 +81,8 @@ public class HarpoonBehaviour : MonoBehaviour
         //PLAYER BOUNCE
         if (collision.transform.CompareTag("Player") && isInBounceMomentum)
         {
-            Debug.Log("Ha reobotado");
             Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
+            playerRb.velocity = Vector2.zero;
             playerRb.AddForce(Vector2.up * bounceForce, ForceMode2D.Impulse);
         }
     }

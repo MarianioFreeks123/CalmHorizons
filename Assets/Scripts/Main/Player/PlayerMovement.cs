@@ -19,14 +19,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] LayerMask[] jumpLayers;
 
     [Header("CHECKERS")]
-    [SerializeField]private bool isTouchingGround = false;
+    [SerializeField] public bool isTouchingGround = false;
     public bool playerIsLookingLeft = false;    
 
     [Header("REFERENCES IN SCENE")]
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] Transform checkGround;
 
-    private Rigidbody2D rb2D; 
+    private Rigidbody2D _rb2D; 
 
     private float coyoteTimeCounter;
     private float inputBufferCounter;
@@ -38,25 +38,19 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         // Assign references
-        rb2D = GetComponent<Rigidbody2D>();
+        _rb2D = GetComponent<Rigidbody2D>();
     }
 
     private void Update()
     {
         // Buffer jump input if the jump button is pressed
-        if (Input.GetButtonDown("Jump"))
-        {
-            inputBufferCounter = inputBufferTime;
-        }
+        if (Input.GetButtonDown("Jump")) inputBufferCounter = inputBufferTime;
 
         // Decrease input buffer over time
         inputBufferCounter -= Time.deltaTime;
 
         // Handle jump with coyote time and input buffer
-        if (inputBufferCounter > 0 && (isTouchingGround || coyoteTimeCounter > 0))
-        {
-            Jump();
-        }
+        if (inputBufferCounter > 0 && (isTouchingGround || coyoteTimeCounter > 0)) Jump();
     }
 
     // FixedUpdate is called once per physics frame
@@ -69,41 +63,32 @@ public class PlayerMovement : MonoBehaviour
         Move();
 
         // Check when the player is on the ground
-        CheckGround();
+        CheckGround();        
 
         // Manage coyote time counter
-        if (isTouchingGround)
-        {
-            coyoteTimeCounter = coyoteTime;
-        }
-        else
-        {
-            coyoteTimeCounter -= Time.fixedDeltaTime;
-        }
+        if (isTouchingGround) coyoteTimeCounter = coyoteTime;
+
+        else coyoteTimeCounter -= Time.fixedDeltaTime;
 
         //Extra fall speed
-        if (rb2D.velocity.y < 0)
-        {
-            rb2D.velocity += Vector2.up * Physics2D.gravity.y * 1.5f * Time.deltaTime;
-        }
+        if (_rb2D.velocity.y < 0) _rb2D.velocity += Vector2.up * Physics2D.gravity.y * 1.5f * Time.deltaTime;
     }
 
     private void Move()
     {
         // Move player horizontally
-        rb2D.AddForce(Vector2.right * horizontalInput * speed);
+        _rb2D.AddForce(Vector2.right * horizontalInput * speed);
 
         // Flip sprite according to movement direction
-        if (horizontalInput > 0)
-            playerIsLookingLeft = false;
-        else if (horizontalInput < 0)
-            playerIsLookingLeft = true;
+        if (horizontalInput > 0) playerIsLookingLeft = false;
+
+        else if (horizontalInput < 0) playerIsLookingLeft = true;
 
         spriteRenderer.flipX = playerIsLookingLeft;
 
         // Limit player speed
-        float speedLimit = Mathf.Clamp(rb2D.velocity.x, -maxSpeed, maxSpeed);
-        rb2D.velocity = new Vector2(speedLimit, rb2D.velocity.y);
+        float speedLimit = Mathf.Clamp(_rb2D.velocity.x, -maxSpeed, maxSpeed);
+        _rb2D.velocity = new Vector2(speedLimit, _rb2D.velocity.y);
 
         // Adjust linear drag based on ground or air state
         ModifyLinearDrag();
@@ -111,16 +96,16 @@ public class PlayerMovement : MonoBehaviour
         // Apply terrain friction to slow down the player if they are grounded
         if ((horizontalInput < 0.1 || horizontalInput > 0.1) && isTouchingGround)
         {
-            Vector3 fixedFrictionSpeed = rb2D.velocity;
+            Vector3 fixedFrictionSpeed = _rb2D.velocity;
             fixedFrictionSpeed.x *= terrainFriction;
-            rb2D.velocity = fixedFrictionSpeed;
+            _rb2D.velocity = fixedFrictionSpeed;
         }
     }
 
     private void Jump()
     {
         // Apply initial jump force
-        rb2D.velocity = new Vector2(rb2D.velocity.x, minJumpForce);
+        _rb2D.velocity = new Vector2(_rb2D.velocity.x, minJumpForce);
 
         // Reset coyote time counter and input buffer counter
         coyoteTimeCounter = 0;
@@ -139,29 +124,21 @@ public class PlayerMovement : MonoBehaviour
         // Continue adding jump force while jump button is held
         while (Input.GetButton("Jump") && jumpTime < jumpDuration)
         {
-            rb2D.velocity += new Vector2(0, (maxJumpForce - minJumpForce) * Time.deltaTime);
+            _rb2D.velocity += new Vector2(0, (maxJumpForce - minJumpForce) * Time.deltaTime);
             jumpTime += Time.deltaTime;
             yield return null;  // Wait for the next frame
         }
 
         // If the button is released early and player is still going up, reduce vertical speed
-        if (!Input.GetButton("Jump") && rb2D.velocity.y > 0)
-        {
-            rb2D.velocity = new Vector2(rb2D.velocity.x, rb2D.velocity.y * 0.5f);
-        }
+        if (!Input.GetButton("Jump") && _rb2D.velocity.y > 0) _rb2D.velocity = new Vector2(_rb2D.velocity.x, _rb2D.velocity.y * 0.5f);
     }
 
     // Adjust linear drag depending on whether the player is grounded or airborne
     private void ModifyLinearDrag()
     {
-        if (isTouchingGround)
-        {
-            rb2D.drag = groundLinearDrag;
-        }
-        else
-        {
-            rb2D.drag = airLinearDrag;
-        }
+        if (isTouchingGround) _rb2D.drag = groundLinearDrag;
+
+        else _rb2D.drag = airLinearDrag;
     }
 
     // Check if the player is grounded
