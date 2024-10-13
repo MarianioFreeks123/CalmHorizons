@@ -96,10 +96,10 @@ PlatformEffector2D:
   m_RotationalOffset: 0
   m_UseOneWay: 1
   m_UseOneWayGrouping: 0
-  m_SurfaceArc: 135.34
+  m_SurfaceArc: 160.7
   m_UseSideFriction: 0
   m_UseSideBounce: 0
-  m_SideArc: 1
+  m_SideArc: 0
 --- !u!114 &6127651697705361858
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,10 +115,12 @@ MonoBehaviour:
   harpoonSpeed: 15
   bounceMomentumDuration: 4
   bounceForce: 20
+  debugTimeCollisionParameter: 0.1
   hasCollidedWithTerrain: 0
   isInBounceMomentum: 0
   harpoonIndexInTheManager: 0
   spriteRenderer: {fileID: 5377671167159117990}
+  playerIsInContactWithTheHarpoon: 0
 --- !u!50 &-1360734672534494742
 Rigidbody2D:
   serializedVersion: 4

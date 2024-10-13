@@ -4,80 +4,148 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("PARAMETERS")]
-    [SerializeField] float speed;
-    [SerializeField] float maxSpeed;
-    [SerializeField] float minJumpForce;
-    [SerializeField] float maxJumpForce;
-    [SerializeField] float terrainFriction;
-    [SerializeField] float groundLinearDrag;
-    [SerializeField] float airLinearDrag;
-    [SerializeField] float checkGroundRadius;
-    [SerializeField] float coyoteTime = 0.2f;
-    [SerializeField] float inputBufferTime = 0.2f;
+    [Header("INPUT")]
+    [Tooltip("Makes all input snap to an integer. Prevents gamepads from walking slowly.")]
+    [SerializeField] bool snapInput = true;
+    [SerializeField][Range(0.01f, 0.99f)] float horizontalDeadZoneThreshold = 0.1f;
+    [SerializeField][Range(0.01f, 0.99f)] float verticalDeadZoneThreshold = 0.3f;
 
-    [SerializeField] LayerMask[] jumpLayers;
+    [Header("MOVEMENT")]
+    [SerializeField] float maxSpeed = 14f;
+    [SerializeField] float acceleration = 120f;
+    [SerializeField] float groundDeceleration = 60f;
+    [SerializeField] float airDeceleration = 30f;
+    [SerializeField][Range(0f, -10f)] float groundingForce = -1.5f;
+
+    [Header("JUMP")]
+    [SerializeField] float jumpPower = 36f;
+    [SerializeField] float maxFallSpeed = 40f;
+    [SerializeField] float fallAcceleration = 110f;
+    [SerializeField] float jumpEndEarlyGravityModifier = 3f;
+    [SerializeField] float coyoteTime = 0.15f;
+    [SerializeField] float jumpBuffer = 0.2f;
 
     [Header("CHECKERS")]
-    [SerializeField] public bool isTouchingGround = false;
-    public bool playerIsLookingLeft = false;    
+    [SerializeField] float grounderDistance = 0.05f;
+    [SerializeField] Transform checkGround;
+    public bool isTouchingGround = false;
+    public bool playerIsLookingLeft = false;
 
     [Header("REFERENCES IN SCENE")]
     [SerializeField] SpriteRenderer spriteRenderer;
-    [SerializeField] Transform checkGround;
+    private Rigidbody2D _rb2D;
 
-    private Rigidbody2D _rb2D; 
+    [Header("LAYERS")]
+    [Tooltip("Set this to the layer your player is on")]
+    [SerializeField] LayerMask[] playerCanJumpLayers;
 
-    private float coyoteTimeCounter;
-    private float inputBufferCounter;
+    private float _time;
+    private float _timeJumpWasPressed;
+    private bool _jumpToConsume;
+    private bool _bufferedJumpUsable;
+    private bool _coyoteUsable;
+    private bool _endedJumpEarly;
+    private bool _grounded;
+    private Vector2 _frameVelocity;
+    private float _frameLeftGrounded = float.MinValue;
 
-    // Inputs
     private float horizontalInput;
     private float verticalInput;
 
     void Start()
     {
-        // Assign references
         _rb2D = GetComponent<Rigidbody2D>();
     }
 
     private void Update()
     {
-        // Buffer jump input if the jump button is pressed
-        if (Input.GetButtonDown("Jump")) inputBufferCounter = inputBufferTime;
-
-        // Decrease input buffer over time
-        inputBufferCounter -= Time.deltaTime;
-
-        // Handle jump with coyote time and input buffer
-        if (inputBufferCounter > 0 && (isTouchingGround || coyoteTimeCounter > 0)) Jump();
+        _time += Time.deltaTime;
+        GatherInput();
     }
 
-    // FixedUpdate is called once per physics frame
-    void FixedUpdate()
+    private void GatherInput()
     {
-        // Register Inputs
-        horizontalInput = Input.GetAxis("Horizontal");
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
 
-        // Apply movement
-        Move();
+        if (snapInput)
+        {
+            horizontalInput = Mathf.Abs(horizontalInput) < horizontalDeadZoneThreshold ? 0 : Mathf.Sign(horizontalInput);
+            verticalInput = Mathf.Abs(verticalInput) < verticalDeadZoneThreshold ? 0 : Mathf.Sign(verticalInput);
+        }
 
-        // Check when the player is on the ground
-        CheckGround();        
-
-        // Manage coyote time counter
-        if (isTouchingGround) coyoteTimeCounter = coyoteTime;
-
-        else coyoteTimeCounter -= Time.fixedDeltaTime;
-
-        //Extra fall speed
-        if (_rb2D.velocity.y < 0) _rb2D.velocity += Vector2.up * Physics2D.gravity.y * 1.5f * Time.deltaTime;
+        if (Input.GetButtonDown("Jump"))
+        {
+            _jumpToConsume = true;
+            _timeJumpWasPressed = _time;
+        }
     }
 
-    private void Move()
+    private void FixedUpdate()
     {
-        // Move player horizontally
-        _rb2D.AddForce(Vector2.right * horizontalInput * speed);
+        CheckCollisions();
+
+        HandleJump();
+        HandleDirection();
+        HandleGravity();
+
+        ApplyMovement();
+    }
+
+    private void CheckCollisions()
+    {
+        LayerMask combinedJumpLayers = playerCanJumpLayers[0] | playerCanJumpLayers[1];
+
+        bool groundHit = Physics2D.OverlapCircle(checkGround.position, grounderDistance, combinedJumpLayers);
+        bool ceilingHit = Physics2D.OverlapCircle(checkGround.position, grounderDistance, combinedJumpLayers);
+
+        if (ceilingHit) _frameVelocity.y = Mathf.Min(0, _frameVelocity.y);
+
+        if (!_grounded && groundHit)
+        {
+            _grounded = true;
+            _coyoteUsable = true;
+            _bufferedJumpUsable = true;
+            _endedJumpEarly = false;
+        }
+        else if (_grounded && !groundHit)
+        {
+            _grounded = false;
+            _frameLeftGrounded = _time;
+        }
+    }
+
+    private void HandleJump()
+    {
+        if (!_endedJumpEarly && !_grounded && !Input.GetButton("Jump") && _rb2D.velocity.y > 0) _endedJumpEarly = true;
+
+        if (!_jumpToConsume && !HasBufferedJump()) return;
+
+        if (_grounded || CanUseCoyote()) ExecuteJump();
+
+        _jumpToConsume = false;
+    }
+
+    private void ExecuteJump()
+    {
+        _endedJumpEarly = false;
+        _timeJumpWasPressed = 0;
+        _bufferedJumpUsable = false;
+        _coyoteUsable = false;
+        _frameVelocity.y = jumpPower;
+    }
+
+    private bool HasBufferedJump() => _bufferedJumpUsable && _time < _timeJumpWasPressed + jumpBuffer;
+    private bool CanUseCoyote() => _coyoteUsable && !_grounded && _time < _frameLeftGrounded + coyoteTime;
+
+    private void HandleDirection()
+    {
+        if (horizontalInput == 0)
+        {
+            float deceleration = _grounded ? groundDeceleration : airDeceleration;
+            _frameVelocity.x = Mathf.MoveTowards(_frameVelocity.x, 0, deceleration * Time.fixedDeltaTime);
+        }
+        else _frameVelocity.x = Mathf.MoveTowards(_frameVelocity.x, horizontalInput * maxSpeed, acceleration * Time.fixedDeltaTime);
 
         // Flip sprite according to movement direction
         if (horizontalInput > 0) playerIsLookingLeft = false;
@@ -85,71 +153,28 @@ public class PlayerMovement : MonoBehaviour
         else if (horizontalInput < 0) playerIsLookingLeft = true;
 
         spriteRenderer.flipX = playerIsLookingLeft;
+    }
 
-        // Limit player speed
-        float speedLimit = Mathf.Clamp(_rb2D.velocity.x, -maxSpeed, maxSpeed);
-        _rb2D.velocity = new Vector2(speedLimit, _rb2D.velocity.y);
+    private void HandleGravity()
+    {
+        if (_grounded && _frameVelocity.y <= 0f) _frameVelocity.y = groundingForce;
 
-        // Adjust linear drag based on ground or air state
-        ModifyLinearDrag();
-
-        // Apply terrain friction to slow down the player if they are grounded
-        if ((horizontalInput < 0.1 || horizontalInput > 0.1) && isTouchingGround)
+        else
         {
-            Vector3 fixedFrictionSpeed = _rb2D.velocity;
-            fixedFrictionSpeed.x *= terrainFriction;
-            _rb2D.velocity = fixedFrictionSpeed;
+            float inAirGravity = fallAcceleration;
+            if (_endedJumpEarly && _frameVelocity.y > 0) inAirGravity *= jumpEndEarlyGravityModifier;
+
+            _frameVelocity.y = Mathf.MoveTowards(_frameVelocity.y, -maxFallSpeed, inAirGravity * Time.fixedDeltaTime);
         }
     }
 
-    private void Jump()
+    public void Bounce(float bounceForce)
     {
-        // Apply initial jump force
-        _rb2D.velocity = new Vector2(_rb2D.velocity.x, minJumpForce);
-
-        // Reset coyote time counter and input buffer counter
-        coyoteTimeCounter = 0;
-        inputBufferCounter = 0;
-
-        // Start coroutine for dynamic jumping control
-        StartCoroutine(HandleDynamicJump());
+        // Reset vertical Speed and apply bounce
+        _frameVelocity.y = bounceForce;
     }
 
-    // Coroutine to manage dynamic jump based on button hold time
-    private IEnumerator HandleDynamicJump()
-    {
-        float jumpTime = 0f;
-        float jumpDuration = 0.3f;  // Duration for dynamic jump control
-
-        // Continue adding jump force while jump button is held
-        while (Input.GetButton("Jump") && jumpTime < jumpDuration)
-        {
-            _rb2D.velocity += new Vector2(0, (maxJumpForce - minJumpForce) * Time.deltaTime);
-            jumpTime += Time.deltaTime;
-            yield return null;  // Wait for the next frame
-        }
-
-        // If the button is released early and player is still going up, reduce vertical speed
-        if (!Input.GetButton("Jump") && _rb2D.velocity.y > 0) _rb2D.velocity = new Vector2(_rb2D.velocity.x, _rb2D.velocity.y * 0.5f);
-    }
-
-    // Adjust linear drag depending on whether the player is grounded or airborne
-    private void ModifyLinearDrag()
-    {
-        if (isTouchingGround) _rb2D.drag = groundLinearDrag;
-
-        else _rb2D.drag = airLinearDrag;
-    }
-
-    // Check if the player is grounded
-    private void CheckGround()
-    {
-        // Create a LayerMask variable that combines the layers at index 0 and 1
-        LayerMask combinedJumpLayers = jumpLayers[0] | jumpLayers[1];
-
-        // Check if the ground is being touched using the combined layers
-        isTouchingGround = Physics2D.OverlapCircle(checkGround.position, checkGroundRadius, combinedJumpLayers);
-    }
+    private void ApplyMovement() => _rb2D.velocity = _frameVelocity;
 
     private void OnDrawGizmos()
     {
@@ -157,8 +182,7 @@ public class PlayerMovement : MonoBehaviour
         {
             // Draw a wire sphere to represent the ground check area
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(checkGround.position, checkGroundRadius);
+            Gizmos.DrawWireSphere(checkGround.position, grounderDistance);
         }
     }
 }
-
