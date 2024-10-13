@@ -28,7 +28,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("CHECKERS")]
     [SerializeField] float grounderDistance = 0.05f;
     [SerializeField] Transform checkGround;
-    public bool isTouchingGround = false;
+    public bool isGrounded;
     public bool playerIsLookingLeft = false;
 
     [Header("REFERENCES IN SCENE")]
@@ -44,8 +44,7 @@ public class PlayerMovement : MonoBehaviour
     private bool _jumpToConsume;
     private bool _bufferedJumpUsable;
     private bool _coyoteUsable;
-    private bool _endedJumpEarly;
-    private bool _grounded;
+    private bool _endedJumpEarly;    
     private Vector2 _frameVelocity;
     private float _frameLeftGrounded = float.MinValue;
 
@@ -101,27 +100,27 @@ public class PlayerMovement : MonoBehaviour
 
         if (ceilingHit) _frameVelocity.y = Mathf.Min(0, _frameVelocity.y);
 
-        if (!_grounded && groundHit)
+        if (!isGrounded && groundHit)
         {
-            _grounded = true;
+            isGrounded = true;
             _coyoteUsable = true;
             _bufferedJumpUsable = true;
             _endedJumpEarly = false;
         }
-        else if (_grounded && !groundHit)
+        else if (isGrounded && !groundHit)
         {
-            _grounded = false;
+            isGrounded = false;
             _frameLeftGrounded = _time;
         }
     }
 
     private void HandleJump()
     {
-        if (!_endedJumpEarly && !_grounded && !Input.GetButton("Jump") && _rb2D.velocity.y > 0) _endedJumpEarly = true;
+        if (!_endedJumpEarly && !isGrounded && !Input.GetButton("Jump") && _rb2D.velocity.y > 0) _endedJumpEarly = true;
 
         if (!_jumpToConsume && !HasBufferedJump()) return;
 
-        if (_grounded || CanUseCoyote()) ExecuteJump();
+        if (isGrounded || CanUseCoyote()) ExecuteJump();
 
         _jumpToConsume = false;
     }
@@ -136,13 +135,13 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private bool HasBufferedJump() => _bufferedJumpUsable && _time < _timeJumpWasPressed + jumpBuffer;
-    private bool CanUseCoyote() => _coyoteUsable && !_grounded && _time < _frameLeftGrounded + coyoteTime;
+    private bool CanUseCoyote() => _coyoteUsable && !isGrounded && _time < _frameLeftGrounded + coyoteTime;
 
     private void HandleDirection()
     {
         if (horizontalInput == 0)
         {
-            float deceleration = _grounded ? groundDeceleration : airDeceleration;
+            float deceleration = isGrounded ? groundDeceleration : airDeceleration;
             _frameVelocity.x = Mathf.MoveTowards(_frameVelocity.x, 0, deceleration * Time.fixedDeltaTime);
         }
         else _frameVelocity.x = Mathf.MoveTowards(_frameVelocity.x, horizontalInput * maxSpeed, acceleration * Time.fixedDeltaTime);
@@ -157,7 +156,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleGravity()
     {
-        if (_grounded && _frameVelocity.y <= 0f) _frameVelocity.y = groundingForce;
+        if (isGrounded && _frameVelocity.y <= 0f) _frameVelocity.y = groundingForce;
 
         else
         {
@@ -166,15 +165,15 @@ public class PlayerMovement : MonoBehaviour
 
             _frameVelocity.y = Mathf.MoveTowards(_frameVelocity.y, -maxFallSpeed, inAirGravity * Time.fixedDeltaTime);
         }
-    }
+    }    
+
+    private void ApplyMovement() => _rb2D.velocity = _frameVelocity;
 
     public void Bounce(float bounceForce)
     {
-        // Reset vertical Speed and apply bounce
-        _frameVelocity.y = bounceForce;
+        _frameVelocity.y = bounceForce; // Aplica la fuerza de rebote
+        isGrounded = false; // Marca al jugador como no tocando el suelo
     }
-
-    private void ApplyMovement() => _rb2D.velocity = _frameVelocity;
 
     private void OnDrawGizmos()
     {

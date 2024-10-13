@@ -53,6 +53,8 @@ public class HarpoonManager : MonoBehaviour
         
         //Instantiate the harpoon
         GameObject harpoonShooted = Instantiate(harpoon, shootPoint.position, Quaternion.identity);
+
+        //Assign a parent for order propouses
         harpoonShooted.transform.parent = GameObject.Find("*NC*_HarpoonParent").transform;
 
         if (harpoons[nextHarpoonForShoot] != null) Destroy(harpoons[nextHarpoonForShoot]);

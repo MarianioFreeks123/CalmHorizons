@@ -193,6 +193,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e536c82f2cdcefa47b39253f36583b69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  horizontalAxisDeadZone: 0.1
+  idleDelay: 0.05
   PlayerMovement: {fileID: 3223916395753559884}
 --- !u!95 &1863170470057083932
 Animator:
@@ -299,21 +301,21 @@ MonoBehaviour:
   snapInput: 1
   horizontalDeadZoneThreshold: 0.1
   verticalDeadZoneThreshold: 0.3
-  maxSpeed: 14
-  acceleration: 120
-  groundDeceleration: 60
-  airDeceleration: 30
+  maxSpeed: 8
+  acceleration: 100
+  groundDeceleration: 80
+  airDeceleration: 20
   groundingForce: -1.5
-  jumpPower: 28
-  maxFallSpeed: 30
+  jumpPower: 25
+  maxFallSpeed: 12
   fallAcceleration: 90
   jumpEndEarlyGravityModifier: 3
   coyoteTime: 0.15
   jumpBuffer: 0.2
   grounderDistance: 0.14
   checkGround: {fileID: 3967452805852627463}
-  isTouchingGround: 1
-  playerIsLookingLeft: 0
+  isGrounded: 0
+  playerIsLookingLeft: 1
   spriteRenderer: {fileID: 2981870418032306103}
   playerCanJumpLayers:
   - serializedVersion: 2
@@ -332,7 +334,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af678d877bdf7484d9562bb04eef98af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shootCadence: 1
+  shootCadence: 0.5
 --- !u!50 &6050420824487390221
 Rigidbody2D:
   serializedVersion: 4
