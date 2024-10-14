@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3743681614737708116}
+  - component: {fileID: 9094487690994245843}
   - component: {fileID: 2824064219885313908}
   - component: {fileID: 8729808282187930505}
   - component: {fileID: 1160470302812529400}
-  - component: {fileID: 9094487690994245843}
   m_Layer: 9
   m_Name: FakeHarpoon
   m_TagString: Untagged
@@ -36,6 +36,28 @@ Transform:
   - {fileID: 370355388315974939}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9094487690994245843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 206749616087088662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 612e2192a5b568c42971403682b7d9f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minHorizontalForce: -8
+  maxHorizontalForce: 8
+  minVerticalForce: 5
+  maxVerticalForce: 7
+  minRotation: -360
+  maxRotation: 360
+  timeForDissapear: 5
+  timeForEnableCollision: 0.3
+  fadeDuration: 0.5
+  spriteRenderer: {fileID: 7550368718673185959}
 --- !u!61 &2824064219885313908
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -43,7 +65,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 206749616087088662}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -127,27 +149,6 @@ PlatformEffector2D:
   m_UseSideFriction: 0
   m_UseSideBounce: 1
   m_SideArc: 140.92
---- !u!114 &9094487690994245843
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 206749616087088662}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 612e2192a5b568c42971403682b7d9f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minHorizontalForce: 3
-  maxHorizontalForce: 6
-  minVerticalForce: 5
-  maxVerticalForce: 7
-  minRotation: -360
-  maxRotation: 360
-  timeForDissapear: 5
-  fadeDuration: 0.5
-  spriteRenderer: {fileID: 7550368718673185959}
 --- !u!1 &2384392066982106672
 GameObject:
   m_ObjectHideFlags: 0
@@ -266,5 +267,5 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1, y: 0.99999994}
+  m_Size: {x: 1, y: 1}
   m_Direction: 1

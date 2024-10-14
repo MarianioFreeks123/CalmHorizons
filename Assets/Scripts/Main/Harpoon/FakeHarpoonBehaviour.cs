@@ -15,16 +15,21 @@ public class FakeHarpoonBehaviour : MonoBehaviour
     [SerializeField] private float maxRotation = 360f;
 
     [SerializeField] private float timeForDissapear;
+    [SerializeField] private float timeForEnableCollision;
     [SerializeField] private float fadeDuration;
 
     [Header("REFERENCES IN SCENE")]
     [SerializeField] private SpriteRenderer spriteRenderer;
 
+    private BoxCollider2D _boxCollider;
     private Rigidbody2D _rb;
 
     void Start()
     {
+        //Assign references
         _rb = GetComponent<Rigidbody2D>();
+        _boxCollider = GetComponent<BoxCollider2D>();
+
         ApplyImpulse();
         ApplyRandomRotation();
     }
@@ -68,5 +73,11 @@ public class FakeHarpoonBehaviour : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+
+    IEnumerator EnableCollision()
+    {
+        yield return new WaitForSeconds(timeForEnableCollision);
+        _boxCollider.enabled = true;
     }
 }

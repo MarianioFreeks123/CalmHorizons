@@ -16,7 +16,8 @@ public class HarpoonBehaviour : MonoBehaviour
     public int harpoonIndexInTheManager;
 
     [Header("REFERENCES IN SCENE")]
-    [SerializeField] private SpriteRenderer spriteRenderer;    
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private GameObject backCollision;
 
     private Rigidbody2D _rb;
     private PlayerMovement playerMovement;
@@ -37,7 +38,13 @@ public class HarpoonBehaviour : MonoBehaviour
         _boxCollider = GetComponent<BoxCollider2D>();               
 
         //Decide direction depending of the player looking direction
-        direction = playerMovement.playerIsLookingLeft ? new Vector2(-1, 0) : new Vector2(1, 0);
+        direction = playerMovement.playerIsLookingLeft ? Vector2.left : Vector2.right;
+
+        //Put the collision in different sides of the harpoon depending of the direction
+        Vector3 backCollisionLocation = backCollision.transform.position;
+        if (direction == Vector2.left) backCollisionLocation = new Vector3 (backCollisionLocation.x + 0.321f, backCollisionLocation.y, backCollisionLocation.z);
+        else backCollisionLocation = new Vector3(backCollisionLocation.x - 0.321f, backCollisionLocation.y, backCollisionLocation.z);
+        backCollision.transform.position = backCollisionLocation;
 
         //Assign the position of the harpoon in the harpoon manager index
         harpoonIndexInTheManager = HarpoonManager.instance.nextHarpoonForShoot - 1;

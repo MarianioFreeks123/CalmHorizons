@@ -32,7 +32,6 @@ public class PlayerMovement : MonoBehaviour
     public bool playerIsLookingLeft = false;
 
     [Header("REFERENCES IN SCENE")]
-    [SerializeField] SpriteRenderer spriteRenderer;
     private Rigidbody2D _rb2D;
 
     [Header("LAYERS")]
@@ -149,9 +148,7 @@ public class PlayerMovement : MonoBehaviour
         // Flip sprite according to movement direction
         if (horizontalInput > 0) playerIsLookingLeft = false;
 
-        else if (horizontalInput < 0) playerIsLookingLeft = true;
-
-        spriteRenderer.flipX = playerIsLookingLeft;
+        else if (horizontalInput < 0) playerIsLookingLeft = true;        
     }
 
     private void HandleGravity()

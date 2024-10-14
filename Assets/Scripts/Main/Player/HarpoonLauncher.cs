@@ -8,7 +8,10 @@ public class HarpoonLauncher : MonoBehaviour
     public event HarpoonLauncherDelegate ShootHarpoon;
 
     [Header("PARAMETERS")]
-    [SerializeField] private float shootCadence;    
+    [SerializeField] private float shootCadence;
+
+    [Header("REFERENCES IN SCENE")]
+    [SerializeField] ParticleSystem shootParticleSystem;
 
     private bool canShoot = true;
 
@@ -21,6 +24,9 @@ public class HarpoonLauncher : MonoBehaviour
     private IEnumerator Shoot()
     {
         canShoot = false;
+
+        //Play smoke particle system
+        shootParticleSystem.Play();
 
         //Shoot event if any object is subscribed to the event
         ShootHarpoon?.Invoke();

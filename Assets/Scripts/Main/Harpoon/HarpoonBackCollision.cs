@@ -12,7 +12,7 @@ public class HarpoonBackCollision : MonoBehaviour
     {
         HarpoonBehaviour destroyedHarpoonBehaviour = collision.transform.GetComponent<HarpoonBehaviour>();
         
-        if (harpoonBehaviour.isHarpoonAnchored() && collision.transform.CompareTag("FliyingHarpoon"))
+        if (harpoonBehaviour.isHarpoonAnchored() && collision.transform.CompareTag("Harpoon"))
         {           
 
             GameObject fakeHarpoonInstance = Instantiate(fakeHarpoon, this.transform.position, Quaternion.identity);
