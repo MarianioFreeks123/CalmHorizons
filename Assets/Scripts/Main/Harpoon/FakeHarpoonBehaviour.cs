@@ -7,10 +7,18 @@ public class FakeHarpoonBehaviour : MonoBehaviour
     [Header("PARAMETERS")]
     [SerializeField] private float minHorizontalForce;
     [SerializeField] private float maxHorizontalForce;
+
     [SerializeField] private float minVerticalForce;
     [SerializeField] private float maxVerticalForce;
+
     [SerializeField] private float minRotation = -360f;
-    [SerializeField] private float maxRotation = 360f;  
+    [SerializeField] private float maxRotation = 360f;
+
+    [SerializeField] private float timeForDissapear;
+    [SerializeField] private float fadeDuration;
+
+    [Header("REFERENCES IN SCENE")]
+    [SerializeField] private SpriteRenderer spriteRenderer;
 
     private Rigidbody2D _rb;
 
@@ -43,6 +51,22 @@ public class FakeHarpoonBehaviour : MonoBehaviour
         if (collision.transform.CompareTag("Terrain"))
         {
             _rb.bodyType = RigidbodyType2D.Static;
+            StartCoroutine(StartFadeOut());
         }
+    }
+
+    IEnumerator StartFadeOut()
+    {
+        yield return new WaitForSeconds(timeForDissapear);
+
+        while (spriteRenderer.color.a > 0)
+        {
+            Color color = spriteRenderer.color;
+            color.a -= Time.deltaTime / fadeDuration;
+            spriteRenderer.color = color;
+            yield return null;
+        }
+
+        Destroy(gameObject);
     }
 }

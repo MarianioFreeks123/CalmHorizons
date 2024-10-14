@@ -1635,13 +1635,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 88281297}
     m_Modifications:
-    - target: {fileID: 1518748279370741604, guid: e8012036fa7e15a4a87935f596cbf933, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.242
-      objectReference: {fileID: 0}
-    - target: {fileID: 1518748279370741604, guid: e8012036fa7e15a4a87935f596cbf933, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.084
+    - target: {fileID: 3223916395753559884, guid: e8012036fa7e15a4a87935f596cbf933, type: 3}
+      propertyPath: groundLayers.m_Bits
+      value: 320
       objectReference: {fileID: 0}
     - target: {fileID: 5152903944479363109, guid: e8012036fa7e15a4a87935f596cbf933, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1740,6 +1736,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3526573211316701547, guid: d56b12ffd1c9ae24b9c30729764c4aac, type: 3}
+      propertyPath: harpoon
+      value: 
+      objectReference: {fileID: 7399236261315995482, guid: 33f5bd759304bf24a86c7f91062aabfa, type: 3}
     - target: {fileID: 5788103121534815989, guid: d56b12ffd1c9ae24b9c30729764c4aac, type: 3}
       propertyPath: m_Name
       value: HarpoonManager

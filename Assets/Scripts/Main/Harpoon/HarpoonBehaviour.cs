@@ -8,6 +8,7 @@ public class HarpoonBehaviour : MonoBehaviour
     [SerializeField] private float harpoonSpeed;
     [SerializeField] private float bounceMomentumDuration;
     [SerializeField] private float bounceForce;
+    [SerializeField] private float verticalCollisionMargin;
 
     [Header("CHECKERS")]
     [SerializeField] private bool hasCollidedWithTerrain;
@@ -24,16 +25,19 @@ public class HarpoonBehaviour : MonoBehaviour
     private PlayerMovement playerMovement;
     private BoxCollider2D _boxCollider;
     private Transform playerTransform;
+    private Transform playerFoots;
 
     private Vector2 direction;
 
     void Start()
     {
         //Assign references
-        _rb = GetComponent<Rigidbody2D>();
-        _boxCollider = GetComponent<BoxCollider2D>();
+        playerFoots = GameObject.Find("*NC*_Foots").transform;
         playerTransform = GameObject.Find("*NC*_Player").transform;
-        playerMovement = playerTransform.GetComponent<PlayerMovement>();             
+        playerMovement = playerTransform.GetComponent<PlayerMovement>();
+
+        _rb = GetComponent<Rigidbody2D>();
+        _boxCollider = GetComponent<BoxCollider2D>();               
 
         //Decide direction depending of the player looking direction
         direction = playerMovement.playerIsLookingLeft ? new Vector2(-1, 0) : new Vector2(1, 0);
@@ -49,6 +53,13 @@ public class HarpoonBehaviour : MonoBehaviour
     {
         //Destroy the harpoon when cross camera limits
         DestroyHarpoonIfCrossCameraLimits();
+
+        //Disable collision when player is BELOW the harpoon
+        if (hasCollidedWithTerrain)
+        {
+            if (playerFoots.position.y < this.transform.position.y + verticalCollisionMargin) EnableOrDisableCollision(true);
+            else if (playerFoots.position.y > this.transform.position.y - verticalCollisionMargin) EnableOrDisableCollision(false);
+        }        
     }
 
     // Update is called once per frame
@@ -103,10 +114,7 @@ public class HarpoonBehaviour : MonoBehaviour
     }
 
     //Void used for knowing the state of the harpoon
-    public bool isHarpoonAnchored()
-    {
-        return hasCollidedWithTerrain;
-    }
+    public bool isHarpoonAnchored() => hasCollidedWithTerrain;
 
     private void DestroyHarpoonIfCrossCameraLimits()
     {
@@ -123,7 +131,6 @@ public class HarpoonBehaviour : MonoBehaviour
             HarpoonManager.instance.DestroyHarpoon(harpoonIndexInTheManager);
         }
     }
-
     private IEnumerator BounceMomentum()
     {
         //DEBUG [CAN BE DELEATED]
@@ -136,5 +143,13 @@ public class HarpoonBehaviour : MonoBehaviour
 
         isInBounceMomentum = false;
         spriteRenderer.color = previousColor;
+    }
+
+    private void EnableOrDisableCollision(bool ignoreLayers)
+    {
+        int layer1 = LayerMask.NameToLayer("Player");
+        int layer2 = LayerMask.NameToLayer("AnchoredHarpoon");
+
+        Physics2D.IgnoreLayerCollision(layer1, layer2, ignoreLayers);
     }
 }

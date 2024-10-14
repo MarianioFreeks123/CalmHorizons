@@ -37,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("LAYERS")]
     [Tooltip("Set this to the layer your player is on")]
-    [SerializeField] LayerMask[] playerCanJumpLayers;
+    [SerializeField] LayerMask groundLayers;
 
     private float _time;
     private float _timeJumpWasPressed;
@@ -93,13 +93,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void CheckCollisions()
     {
-        LayerMask combinedJumpLayers = playerCanJumpLayers[0] | playerCanJumpLayers[1];
+        bool groundHit = Physics2D.OverlapCircle(checkGround.position, grounderDistance, groundLayers);
+        bool ceilingHit = Physics2D.OverlapCircle(checkGround.position, grounderDistance, groundLayers);
 
-        bool groundHit = Physics2D.OverlapCircle(checkGround.position, grounderDistance, combinedJumpLayers);
-        bool ceilingHit = Physics2D.OverlapCircle(checkGround.position, grounderDistance, combinedJumpLayers);
+        // Lógica para colisión en el techo
+        if (ceilingHit)
+        {
+            _frameVelocity.y = Mathf.Min(0, _frameVelocity.y); // Restringir la velocidad si hay colisión con el techo
+        }
 
-        if (ceilingHit) _frameVelocity.y = Mathf.Min(0, _frameVelocity.y);
-
+        // Lógica para colisión en el suelo
         if (!isGrounded && groundHit)
         {
             isGrounded = true;
