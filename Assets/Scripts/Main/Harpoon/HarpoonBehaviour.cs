@@ -16,10 +16,7 @@ public class HarpoonBehaviour : MonoBehaviour
     public int harpoonIndexInTheManager;
 
     [Header("REFERENCES IN SCENE")]
-    [SerializeField] private SpriteRenderer spriteRenderer;
-
-    [Header("REFERENCES IN PROYECT")]
-    [SerializeField] private GameObject fakeHarpoon;
+    [SerializeField] private SpriteRenderer spriteRenderer;    
 
     private Rigidbody2D _rb;
     private PlayerMovement playerMovement;
@@ -57,8 +54,8 @@ public class HarpoonBehaviour : MonoBehaviour
         //Disable collision when player is BELOW the harpoon
         if (hasCollidedWithTerrain)
         {
-            if (playerFoots.position.y < this.transform.position.y + verticalCollisionMargin) EnableOrDisableCollision(true);
-            else if (playerFoots.position.y > this.transform.position.y - verticalCollisionMargin) EnableOrDisableCollision(false);
+            if (playerFoots.position.y <= this.transform.position.y + verticalCollisionMargin) SetCollisionType(false);
+            else if (playerFoots.position.y > this.transform.position.y - verticalCollisionMargin) SetCollisionType(true);
         }        
     }
 
@@ -83,34 +80,16 @@ public class HarpoonBehaviour : MonoBehaviour
             StartCoroutine(BounceMomentum());
         }
 
-        //COLLISION WITH OTHER HARPOONS
-        //Destroy the anchored harpoon who collide (Only if its moving)
-        if (collision.transform.CompareTag("Harpoon") && !hasCollidedWithTerrain)
+        //PLAYER COLLISION
+        if (collision.transform.CompareTag("Player"))
         {
-            HarpoonBehaviour destroyedHarpoonBehaviour = collision.transform.GetComponent<HarpoonBehaviour>();
-
-            if (destroyedHarpoonBehaviour.isHarpoonAnchored())
+            //Player bounce
+            if (isInBounceMomentum)
             {
-                GameObject fakeHarpoonInstance = Instantiate(fakeHarpoon, this.transform.position, Quaternion.identity);
-
-                //Assign a parent for order propouses
-                fakeHarpoonInstance.transform.parent = GameObject.Find("*NC*_FakeHarpoonParent").transform;
-
-                Destroy(gameObject);
-                HarpoonManager.instance.DestroyHarpoon(harpoonIndexInTheManager);
+                playerMovement = collision.gameObject.GetComponent<PlayerMovement>();
+                if (playerMovement != null) playerMovement.Bounce(bounceForce);
             }
         }
-
-        //PLAYER COLLISION
-        //if (collision.transform.CompareTag("Player"))
-        //{
-        //    //Player bounce
-        //    if (isInBounceMomentum)
-        //    {
-        //        playerMovement = collision.gameObject.GetComponent<PlayerMovement>();
-        //        //if(playerMovement != null) playerMovement.Bounce(bounceForce);
-        //    }
-        //}        
     }
 
     //Void used for knowing the state of the harpoon
@@ -145,11 +124,5 @@ public class HarpoonBehaviour : MonoBehaviour
         spriteRenderer.color = previousColor;
     }
 
-    private void EnableOrDisableCollision(bool ignoreLayers)
-    {
-        int layer1 = LayerMask.NameToLayer("Player");
-        int layer2 = LayerMask.NameToLayer("AnchoredHarpoon");
-
-        Physics2D.IgnoreLayerCollision(layer1, layer2, ignoreLayers);
-    }
+    private void SetCollisionType(bool isEnabled) => _boxCollider.enabled = isEnabled;
 }

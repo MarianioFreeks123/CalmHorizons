@@ -15,10 +15,7 @@ public class HarpoonLauncher : MonoBehaviour
     void Update()
     {
         //Shoot when player touches input and cadence time is complete
-        if (canShoot && Input.GetButtonDown("Fire1"))
-        {
-            StartCoroutine(Shoot());
-        }
+        if (canShoot && Input.GetButtonDown("Fire1")) StartCoroutine(Shoot());
     }
 
     private IEnumerator Shoot()

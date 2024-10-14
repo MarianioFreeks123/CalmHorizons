@@ -97,10 +97,7 @@ public class PlayerMovement : MonoBehaviour
         bool ceilingHit = Physics2D.OverlapCircle(checkGround.position, grounderDistance, groundLayers);
 
         // Lógica para colisión en el techo
-        if (ceilingHit)
-        {
-            _frameVelocity.y = Mathf.Min(0, _frameVelocity.y); // Restringir la velocidad si hay colisión con el techo
-        }
+        if (ceilingHit) _frameVelocity.y = Mathf.Min(0, _frameVelocity.y);
 
         // Lógica para colisión en el suelo
         if (!isGrounded && groundHit)
@@ -172,12 +169,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyMovement() => _rb2D.velocity = _frameVelocity;
 
-    public void Bounce(float bounceForce)
-    {
-        _frameVelocity.y = bounceForce; // Aplica la fuerza de rebote
-        isGrounded = false; // Marca al jugador como no tocando el suelo
-    }
-
+    public void Bounce(float bounceForce) => _frameVelocity.y = bounceForce;
     private void OnDrawGizmos()
     {
         if (checkGround != null)
