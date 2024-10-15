@@ -19,6 +19,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float groundDeceleration = 60f;
     [SerializeField] float airDeceleration = 30f;
     [SerializeField][Range(0f, -10f)] float groundingForce = -1.5f;
+    [SerializeField] private float lastStepTime;
+    [SerializeField] private float StepInterval = 0.5f;
 
     [Header("JUMP")]
     [SerializeField] float jumpPower = 36f;
@@ -34,6 +36,27 @@ public class PlayerMovement : MonoBehaviour
     public bool isGrounded;
     public bool playerIsLookingLeft = false;
     public Vector2 playerPosition;
+
+
+   
+    
+    private AudioSource _audioSource;
+    [Header("AUDIO FX")]
+    [SerializeField] AudioClip _jumpSound;
+    [SerializeField] AudioClip _walkSoundTerrain;
+    [SerializeField] AudioClip _walkSoundWood;
+    [SerializeField] AudioClip _walkSoundStone;
+    [SerializeField] AudioClip _walkSoundSnow;
+
+    [Header("AUDIO VOLUME")]
+    [Range(0.0f, 1.0f)]
+    [SerializeField] float jumpSoundVolume;
+    [Range(0.0f, 1.0f)]
+    [SerializeField] float walkSoundWoodVolume;
+    [Range(0.0f, 1.0f)]
+    [SerializeField] float walkSoundStoneVolume;
+    [Range(0.0f, 1.0f)]
+    [SerializeField] float walkSoundSnowVolume;
 
     [Header("REFERENCES IN SCENE")]
     private Rigidbody2D _rb2D;
@@ -58,12 +81,38 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         _rb2D = GetComponent<Rigidbody2D>();
+        lastStepTime = Time.time;
     }
 
     private void Update()
     {
         _time += Time.deltaTime;
         GatherInput();
+        
+        //STEPS SOUNDS SCRIPT
+        if (isGrounded && _frameVelocity.magnitude > horizontalDeadZoneThreshold)
+        {
+            RaycastHit walkingHit;
+            //Verifica si tiene la velocidad suficiente desde el último paso
+            if (Time.time - lastStepTime > StepInterval )
+            {
+                if (Physics.Raycast(transform.position,Vector3.down,out walkingHit, 10f))
+                {
+                    if (walkingHit.collider.CompareTag("Terrain"))
+                    {
+                        _audioSource.PlayOneShot(_walkSoundTerrain);
+                        lastStepTime = Time.time;
+                    }
+
+                    if (walkingHit.collider.CompareTag("Snow"))
+                    {
+                        
+                        lastStepTime = Time.time;
+                    }
+                }
+            }
+            
+        }
     }
 
     private void FixedUpdate()
@@ -116,6 +165,7 @@ public class PlayerMovement : MonoBehaviour
             _frameLeftGrounded = _time;
         }
     }
+    
 
     private void HandleJump()
     {
@@ -140,6 +190,7 @@ public class PlayerMovement : MonoBehaviour
         _bufferedJumpUsable = false;
         _coyoteUsable = false;
         _frameVelocity.y = jumpPower;
+        
     }
 
     private bool HasBufferedJump() => _bufferedJumpUsable && _time < _timeJumpWasPressed + jumpBuffer;
