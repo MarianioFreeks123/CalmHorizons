@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class DebugManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public static DebugManager instance;
 
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
-        
+        if (instance != null && instance != this) Destroy(this);
+
+        else instance = this;
+
+    }
+    public void DebugErrorController(string errorMessage)
+    {
+        string gameObjectName = this.transform.name;
+        Debug.LogError(errorMessage + " in " + gameObjectName + " component is not found");
+        Time.timeScale = 0.0f;
     }
 }

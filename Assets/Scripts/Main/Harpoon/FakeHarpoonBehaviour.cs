@@ -31,8 +31,8 @@ public class FakeHarpoonBehaviour : MonoBehaviour
         _boxCollider = GetComponent<BoxCollider2D>();
 
         //Warning debug void
-        if (_rb == null) DebugErrorController(_rb.GetType().Name);
-        if (_boxCollider == null) DebugErrorController(_boxCollider.GetType().Name);
+        if (_rb == null) DebugManager.instance.DebugErrorController(_rb.GetType().Name);
+        if (_boxCollider == null) DebugManager.instance.DebugErrorController(_boxCollider.GetType().Name);
 
         ApplyImpulse();
         ApplyRandomRotation();
@@ -83,12 +83,5 @@ public class FakeHarpoonBehaviour : MonoBehaviour
     {
         yield return new WaitForSeconds(timeForEnableCollision);
         _boxCollider.enabled = true;
-    }
-
-    private void DebugErrorController(string errorMessage)
-    {
-        string gameObjectName = this.transform.name;
-        Debug.LogError(errorMessage + " in " + gameObjectName + " component is not found");
-        Time.timeScale = 0.0f;
-    }
+    }        
 }

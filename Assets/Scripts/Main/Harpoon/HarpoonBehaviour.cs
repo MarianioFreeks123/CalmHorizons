@@ -36,11 +36,11 @@ public class HarpoonBehaviour : MonoBehaviour
         _boxCollider = GetComponent<BoxCollider2D>();
 
         //Warning debug void
-        if (playerFoots == null) DebugErrorController(playerFoots.GetType().Name);
-        if (playerTransform == null) DebugErrorController(playerTransform.GetType().Name);
-        if (playerMovement == null) DebugErrorController(playerMovement.GetType().Name);
-        if (_rb == null) DebugErrorController(_rb.GetType().Name);
-        if (_boxCollider == null) DebugErrorController(_boxCollider.GetType().Name);
+        if (playerFoots == null) DebugManager.instance.DebugErrorController(playerFoots.GetType().Name);
+        if (playerTransform == null) DebugManager.instance.DebugErrorController(playerTransform.GetType().Name);
+        if (playerMovement == null) DebugManager.instance.DebugErrorController(playerMovement.GetType().Name);
+        if (_rb == null) DebugManager.instance.DebugErrorController(_rb.GetType().Name);
+        if (_boxCollider == null) DebugManager.instance.DebugErrorController(_boxCollider.GetType().Name);
 
         //Decide direction depending of the player looking direction
         direction = playerMovement.playerIsLookingLeft ? Vector2.left : Vector2.right;
@@ -96,11 +96,4 @@ public class HarpoonBehaviour : MonoBehaviour
     private void PlayerIsBending() => SetCollisionType(false);
 
     private void SetCollisionType(bool isEnabled) => _boxCollider.enabled = isEnabled;
-
-    private void DebugErrorController(string errorMessage)
-    {
-        string gameObjectName = this.transform.name;
-        Debug.LogError(errorMessage + " in " + gameObjectName + " reference is not found");
-        Time.timeScale = 0.0f;
-    }
 }
