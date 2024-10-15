@@ -33,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] Transform checkGround;
     public bool isGrounded;
     public bool playerIsLookingLeft = false;
+    public Vector2 playerPosition;
 
     [Header("REFERENCES IN SCENE")]
     private Rigidbody2D _rb2D;
@@ -52,7 +53,8 @@ public class PlayerMovement : MonoBehaviour
     private float _time;
     private float horizontalInput;
     private float verticalInput;
-    private float _timeJumpWasPressed;
+    private float _timeJumpWasPressed;    
+
     void Start()
     {
         _rb2D = GetComponent<Rigidbody2D>();
