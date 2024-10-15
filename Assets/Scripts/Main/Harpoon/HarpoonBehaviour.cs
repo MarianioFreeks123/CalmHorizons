@@ -1,3 +1,4 @@
+using MoreMountains.Feedbacks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,7 @@ public class HarpoonBehaviour : MonoBehaviour
     [Header("REFERENCES IN SCENE")]
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private GameObject backCollision;
+    [SerializeField] private MMF_Player anchorFeedback;
 
     private Rigidbody2D _rb;
     private PlayerMovement playerMovement;
@@ -45,11 +47,15 @@ public class HarpoonBehaviour : MonoBehaviour
         //Decide direction depending of the player looking direction
         direction = playerMovement.playerIsLookingLeft ? Vector2.left : Vector2.right;
 
-        //Put the collision in different sides of the harpoon depending of the direction
+        //Put the collision in different sides of the harpoon and flip spritesheet depending of the direction
         Vector3 backCollisionLocation = backCollision.transform.position;
 
         if (direction == Vector2.left) 
-            backCollisionLocation = new Vector3 (backCollisionLocation.x + backCollisionGap, backCollisionLocation.y, backCollisionLocation.z);
+        {
+            backCollisionLocation = new Vector3(backCollisionLocation.x + backCollisionGap, backCollisionLocation.y, backCollisionLocation.z);
+            spriteRenderer.flipX = true;
+        }
+            
         else 
             backCollisionLocation = new Vector3(backCollisionLocation.x - backCollisionGap, backCollisionLocation.y, backCollisionLocation.z);
         
@@ -87,6 +93,9 @@ public class HarpoonBehaviour : MonoBehaviour
             hasCollidedWithTerrain = true;
             _rb.bodyType = RigidbodyType2D.Static;
             this.gameObject.layer = LayerMask.NameToLayer("AnchoredHarpoon");
+
+            //PlayFeedback
+            anchorFeedback.PlayFeedbacks();
         }
     }
 

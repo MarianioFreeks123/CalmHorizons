@@ -53,7 +53,7 @@ MonoBehaviour:
   maxVerticalForce: 7
   minRotation: -360
   maxRotation: 360
-  timeForDissapear: 5
+  timeForDissapear: 2
   timeForEnableCollision: 0.3
   fadeDuration: 0.5
   spriteRenderer: {fileID: 7550368718673185959}
@@ -89,7 +89,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 1
   m_UsedByComposite: 0
-  m_Offset: {x: 0.44, y: 0}
+  m_Offset: {x: 0.39548594, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -100,7 +100,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.13, y: 0.02}
+  m_Size: {x: 0.040971905, y: 0.0029673278}
   m_EdgeRadius: 0
 --- !u!50 &8729808282187930505
 Rigidbody2D:
@@ -204,7 +204,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 237253514, guid: 932e2241adcf5bb4584c60eed0299c16, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.61960787}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -246,6 +246,6 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1, y: 0.08}
+  m_Offset: {x: -0.07, y: 0}
+  m_Size: {x: 0.85, y: 0.08}
   m_Direction: 1
