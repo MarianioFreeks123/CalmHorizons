@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public delegate void PlayerMovementDelegate();
+    public event PlayerMovementDelegate Bend;
+
     [Header("INPUT")]
     [Tooltip("Makes all input snap to an integer. Prevents gamepads from walking slowly.")]
     [SerializeField] bool snapInput = true;
@@ -36,20 +39,20 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("LAYERS")]
     [Tooltip("Set this to the layer your player is on")]
-    [SerializeField] LayerMask groundLayers;
-
-    private float _time;
-    private float _timeJumpWasPressed;
+    [SerializeField] LayerMask groundLayers;    
+    
     private bool _jumpToConsume;
     private bool _bufferedJumpUsable;
     private bool _coyoteUsable;
-    private bool _endedJumpEarly;    
-    private Vector2 _frameVelocity;
-    private float _frameLeftGrounded = float.MinValue;
+    private bool _endedJumpEarly;
 
+    private Vector2 _frameVelocity;
+
+    private float _frameLeftGrounded = float.MinValue;
+    private float _time;
     private float horizontalInput;
     private float verticalInput;
-
+    private float _timeJumpWasPressed;
     void Start()
     {
         _rb2D = GetComponent<Rigidbody2D>();
@@ -59,6 +62,16 @@ public class PlayerMovement : MonoBehaviour
     {
         _time += Time.deltaTime;
         GatherInput();
+    }
+
+    private void FixedUpdate()
+    {
+        CheckCollisions();
+        HandleJump();
+        HandleDirection();
+        HandleBend();
+        HandleGravity();
+        ApplyMovement();
     }
 
     private void GatherInput()
@@ -77,18 +90,7 @@ public class PlayerMovement : MonoBehaviour
             _jumpToConsume = true;
             _timeJumpWasPressed = _time;
         }
-    }
-
-    private void FixedUpdate()
-    {
-        CheckCollisions();
-
-        HandleJump();
-        HandleDirection();
-        HandleGravity();
-
-        ApplyMovement();
-    }
+    }    
 
     private void CheckCollisions()
     {
@@ -124,6 +126,11 @@ public class PlayerMovement : MonoBehaviour
         _jumpToConsume = false;
     }
 
+    private void HandleBend()
+    {
+        if (Input.GetKey(KeyCode.S)) Bend?.Invoke();    
+    }
+
     private void ExecuteJump()
     {
         _endedJumpEarly = false;
@@ -153,20 +160,20 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleGravity()
     {
-        if (isGrounded && _frameVelocity.y <= 0f) _frameVelocity.y = groundingForce;
+        if (isGrounded && _frameVelocity.y <= 0f) _frameVelocity.y = groundingForce; // Aplica una pequeña fuerza hacia abajo si está en el suelo
 
         else
         {
             float inAirGravity = fallAcceleration;
             if (_endedJumpEarly && _frameVelocity.y > 0) inAirGravity *= jumpEndEarlyGravityModifier;
 
+            // Aplica la gravedad en el aire
             _frameVelocity.y = Mathf.MoveTowards(_frameVelocity.y, -maxFallSpeed, inAirGravity * Time.fixedDeltaTime);
         }
-    }    
+    }
 
     private void ApplyMovement() => _rb2D.velocity = _frameVelocity;
-
-    public void Bounce(float bounceForce) => _frameVelocity.y = bounceForce;
+    
     private void OnDrawGizmos()
     {
         if (checkGround != null)

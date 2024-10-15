@@ -30,6 +30,10 @@ public class FakeHarpoonBehaviour : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _boxCollider = GetComponent<BoxCollider2D>();
 
+        //Warning debug void
+        if (_rb == null) DebugErrorController(_rb.GetType().Name);
+        if (_boxCollider == null) DebugErrorController(_boxCollider.GetType().Name);
+
         ApplyImpulse();
         ApplyRandomRotation();
     }
@@ -51,7 +55,7 @@ public class FakeHarpoonBehaviour : MonoBehaviour
         transform.Rotate(0, 0, randomRotation);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.transform.CompareTag("Terrain"))
         {
@@ -79,5 +83,12 @@ public class FakeHarpoonBehaviour : MonoBehaviour
     {
         yield return new WaitForSeconds(timeForEnableCollision);
         _boxCollider.enabled = true;
+    }
+
+    private void DebugErrorController(string errorMessage)
+    {
+        string gameObjectName = this.transform.name;
+        Debug.LogError(errorMessage + " in " + gameObjectName + " component is not found");
+        Time.timeScale = 0.0f;
     }
 }

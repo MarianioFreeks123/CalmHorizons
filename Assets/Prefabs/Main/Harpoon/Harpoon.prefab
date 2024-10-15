@@ -274,7 +274,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 7399236261315995482}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: ba40fce78e0fa774ebf33180c8e174a2, type: 2}
+  m_Material: {fileID: 6200000, guid: fea5bbbbe95c44b42abeddc9ca3e91a4, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -323,11 +323,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   harpoonSpeed: 15
-  bounceMomentumDuration: 4
-  bounceForce: 40
-  verticalCollisionMargin: 0.15
+  verticalCollisionMargin: 0.2
+  backCollisionGap: 0.321
   hasCollidedWithTerrain: 0
-  isInBounceMomentum: 0
   harpoonIndexInTheManager: 0
   spriteRenderer: {fileID: 4894779846004167534}
   backCollision: {fileID: 3659043554063154741}

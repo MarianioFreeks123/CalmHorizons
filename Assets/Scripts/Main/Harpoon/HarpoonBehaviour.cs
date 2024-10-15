@@ -6,13 +6,11 @@ public class HarpoonBehaviour : MonoBehaviour
 {
     [Header("PARAMETERS")]
     [SerializeField] private float harpoonSpeed;
-    [SerializeField] private float bounceMomentumDuration;
-    [SerializeField] private float bounceForce;
     [SerializeField] private float verticalCollisionMargin;
+    [SerializeField] private float backCollisionGap;
 
     [Header("CHECKERS")]
     [SerializeField] private bool hasCollidedWithTerrain;
-    [SerializeField] private bool isInBounceMomentum = false;
     public int harpoonIndexInTheManager;
 
     [Header("REFERENCES IN SCENE")]
@@ -32,32 +30,40 @@ public class HarpoonBehaviour : MonoBehaviour
         //Assign references
         playerFoots = GameObject.Find("*NC*_Foots").transform;
         playerTransform = GameObject.Find("*NC*_Player").transform;
-        playerMovement = playerTransform.GetComponent<PlayerMovement>();
 
+        playerMovement = playerTransform.GetComponent<PlayerMovement>();
         _rb = GetComponent<Rigidbody2D>();
-        _boxCollider = GetComponent<BoxCollider2D>();               
+        _boxCollider = GetComponent<BoxCollider2D>();
+
+        //Warning debug void
+        if (playerFoots == null) DebugErrorController(playerFoots.GetType().Name);
+        if (playerTransform == null) DebugErrorController(playerTransform.GetType().Name);
+        if (playerMovement == null) DebugErrorController(playerMovement.GetType().Name);
+        if (_rb == null) DebugErrorController(_rb.GetType().Name);
+        if (_boxCollider == null) DebugErrorController(_boxCollider.GetType().Name);
 
         //Decide direction depending of the player looking direction
         direction = playerMovement.playerIsLookingLeft ? Vector2.left : Vector2.right;
 
         //Put the collision in different sides of the harpoon depending of the direction
         Vector3 backCollisionLocation = backCollision.transform.position;
-        if (direction == Vector2.left) backCollisionLocation = new Vector3 (backCollisionLocation.x + 0.321f, backCollisionLocation.y, backCollisionLocation.z);
-        else backCollisionLocation = new Vector3(backCollisionLocation.x - 0.321f, backCollisionLocation.y, backCollisionLocation.z);
+
+        if (direction == Vector2.left) 
+            backCollisionLocation = new Vector3 (backCollisionLocation.x + backCollisionGap, backCollisionLocation.y, backCollisionLocation.z);
+        else 
+            backCollisionLocation = new Vector3(backCollisionLocation.x - backCollisionGap, backCollisionLocation.y, backCollisionLocation.z);
+        
         backCollision.transform.position = backCollisionLocation;
 
         //Assign the position of the harpoon in the harpoon manager index
         harpoonIndexInTheManager = HarpoonManager.instance.nextHarpoonForShoot - 1;
 
-        //DEBUG [CAN BE DELEATED]
-        spriteRenderer.color = new Color(Random.value, Random.value, Random.value);
+        //Subscribe to player bend event
+        playerMovement.Bend += PlayerIsBending;
     }
 
     private void Update()
     {
-        //Destroy the harpoon when cross camera limits
-        DestroyHarpoonIfCrossCameraLimits();
-
         //Disable collision when player is BELOW the harpoon
         if (hasCollidedWithTerrain)
         {
@@ -66,7 +72,6 @@ public class HarpoonBehaviour : MonoBehaviour
         }        
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         //Move if not collides with a wall
@@ -82,54 +87,20 @@ public class HarpoonBehaviour : MonoBehaviour
             hasCollidedWithTerrain = true;
             _rb.bodyType = RigidbodyType2D.Static;
             this.gameObject.layer = LayerMask.NameToLayer("AnchoredHarpoon");
-
-            //Start bounce momentum
-            StartCoroutine(BounceMomentum());
-        }
-
-        //PLAYER COLLISION
-        if (collision.transform.CompareTag("Player"))
-        {
-            //Player bounce
-            if (isInBounceMomentum)
-            {
-                playerMovement = collision.gameObject.GetComponent<PlayerMovement>();
-                if (playerMovement != null) playerMovement.Bounce(bounceForce);
-            }
         }
     }
 
     //Void used for knowing the state of the harpoon
     public bool isHarpoonAnchored() => hasCollidedWithTerrain;
 
-    private void DestroyHarpoonIfCrossCameraLimits()
-    {
-        // Obtener la cámara principal
-        Camera cam = Camera.main;
-
-        // Convertir la posición del objeto a coordenadas de la vista de la cámara
-        Vector3 viewportPosition = cam.WorldToViewportPoint(transform.position);
-
-        // Comprobar si el objeto está fuera de los límites de la cámara
-        if (viewportPosition.x < 0 || viewportPosition.x > 1 || viewportPosition.y < 0 || viewportPosition.y > 1)
-        {
-            Destroy(gameObject);
-            HarpoonManager.instance.DestroyHarpoon(harpoonIndexInTheManager);
-        }
-    }
-    private IEnumerator BounceMomentum()
-    {
-        //DEBUG [CAN BE DELEATED]
-        Color previousColor = spriteRenderer.color;        
-        spriteRenderer.color = Color.yellow;
-
-        isInBounceMomentum = true;
-
-        yield return new WaitForSeconds(bounceMomentumDuration);
-
-        isInBounceMomentum = false;
-        spriteRenderer.color = previousColor;
-    }
+    private void PlayerIsBending() => SetCollisionType(false);
 
     private void SetCollisionType(bool isEnabled) => _boxCollider.enabled = isEnabled;
+
+    private void DebugErrorController(string errorMessage)
+    {
+        string gameObjectName = this.transform.name;
+        Debug.LogError(errorMessage + " in " + gameObjectName + " reference is not found");
+        Time.timeScale = 0.0f;
+    }
 }
