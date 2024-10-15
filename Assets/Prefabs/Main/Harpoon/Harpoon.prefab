@@ -379,7 +379,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   harpoonSpeed: 15
-  verticalCollisionMargin: 0.15
+  verticalCollisionMargin: 0.17
   backCollisionGap: 0.321
   hasCollidedWithTerrain: 0
   harpoonIndexInTheManager: 0

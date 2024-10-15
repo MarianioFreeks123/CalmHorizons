@@ -27,6 +27,8 @@ public class HarpoonBehaviour : MonoBehaviour
 
     private Vector2 direction;
 
+    private bool playerIsInContactWithTheHarpoon;
+
     void Start()
     {
         //Assign references
@@ -97,12 +99,28 @@ public class HarpoonBehaviour : MonoBehaviour
             //PlayFeedback
             anchorFeedback.PlayFeedbacks();
         }
+
+        if (collision.transform.CompareTag("Player"))
+        {
+            playerIsInContactWithTheHarpoon = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.transform.CompareTag("Player"))
+        {
+            playerIsInContactWithTheHarpoon = false;
+        }
     }
 
     //Void used for knowing the state of the harpoon
     public bool isHarpoonAnchored() => hasCollidedWithTerrain;
 
-    private void PlayerIsBending() => SetCollisionType(false);
+    private void PlayerIsBending() 
+    {
+        if(playerIsInContactWithTheHarpoon) SetCollisionType(false);
+    } 
 
     private void SetCollisionType(bool isEnabled) => _boxCollider.enabled = isEnabled;
 }
