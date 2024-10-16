@@ -11,6 +11,7 @@ public class HarpoonManager : MonoBehaviour
 
     [Header("REFERENCES IN PROYECT")]
     [SerializeField] private GameObject harpoon;
+    [SerializeField] private GameObject fakeHarpoon;
 
     [Header("CHECKERS")]
     [SerializeField] private List<GameObject> harpoons = new List<GameObject>(); //Need to start with 
@@ -81,5 +82,16 @@ public class HarpoonManager : MonoBehaviour
         nextHarpoonForShoot--;
 
         harpoons.Add(null);
+    }
+
+    public void GenerateFakeHarpoon(Collision2D collision, HarpoonBehaviour destroyedHarpoonBehaviour, Transform spawnTransform)
+    {
+        GameObject fakeHarpoonInstance = Instantiate(fakeHarpoon, spawnTransform.position, Quaternion.identity);
+
+        //Assign a parent for order propouses
+        fakeHarpoonInstance.transform.parent = GameObject.Find("*NC*_FakeHarpoonParent").transform;
+
+        Destroy(collision.gameObject);
+        DestroyHarpoon(destroyedHarpoonBehaviour.harpoonIndexInTheManager);
     }
 }

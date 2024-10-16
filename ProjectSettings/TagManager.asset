@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Terrain
   - Harpoon
+  - StalactitePlatform
   layers:
   - Default
   - TransparentFX
