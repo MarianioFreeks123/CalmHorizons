@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using UnityEngine.Audio;
 
 public enum SoundType
 {
@@ -18,9 +20,8 @@ public enum MusicType
 
 public class AudioManager : MonoBehaviour
 {
-    [Header("SOUNDS")]
-    [SerializeField] private AudioClip[] soundList;
-    [SerializeField] private AudioClip[] musicList;
+    [Header("SOUND LIST STRUCTURE")]
+    [SerializeField] private SoundList[] soundList;
 
     [Header("REFERENCES IN SCENE")]
     [SerializeField] AudioSource soundAudioSource;
@@ -41,12 +42,21 @@ public class AudioManager : MonoBehaviour
 
     public static void PlaySound(SoundType sound, float volume = 1)
     {
-        instance.soundAudioSource.PlayOneShot(instance.soundList[(int)sound], volume);
+        //AudioClip clips[] = instance.soundList[(int)sound.Sounds]
+        //instance.soundAudioSource.PlayOneShot(instance.soundList[(int)sound], volume);
     }
 
     public static void PlayMusic(MusicType sound, float volume = 1)
     {
-        instance.musicAudioSource.volume = volume;
-        instance.musicAudioSource.clip = instance.musicList[(int)sound];
+        //instance.musicAudioSource.volume = volume;
+        //instance.musicAudioSource.clip = instance.musicList[(int)sound];
     }
+}
+
+[Serializable]
+public struct SoundList
+{
+    public string name;
+    [Range(0, 1)] public float volume;
+    public AudioClip[] sounds;
 }
