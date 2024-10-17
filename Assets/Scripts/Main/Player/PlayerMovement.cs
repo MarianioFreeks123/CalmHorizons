@@ -19,8 +19,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float groundDeceleration = 60f;
     [SerializeField] float airDeceleration = 30f;
     [SerializeField][Range(0f, -10f)] float groundingForce = -1.5f;
-    [SerializeField] private float lastStepTime;
-    [SerializeField] private float StepInterval = 0.5f;
+    //[SerializeField] private float lastStepTime;
+    //[SerializeField] private float StepInterval = 0.5f;
 
     [Header("JUMP")]
     [SerializeField] float jumpPower = 36f;
@@ -33,30 +33,28 @@ public class PlayerMovement : MonoBehaviour
     [Header("CHECKERS")]
     [SerializeField] float grounderDistance = 0.05f;
     [SerializeField] Transform checkGround;
+    [SerializeField] Transform checkCeiling;
     public bool isGrounded;
     public bool playerIsLookingLeft = false;
-    public Vector2 playerPosition;
-
-
-   
+    public Vector2 playerPosition;   
     
-    private AudioSource _audioSource;
-    [Header("AUDIO FX")]
-    [SerializeField] AudioClip _jumpSound;
-    [SerializeField] AudioClip _walkSoundTerrain;
-    [SerializeField] AudioClip _walkSoundWood;
-    [SerializeField] AudioClip _walkSoundStone;
-    [SerializeField] AudioClip _walkSoundSnow;
+    //private AudioSource _audioSource;
+    //[Header("AUDIO FX")]
+    //[SerializeField] AudioClip _jumpSound;
+    //[SerializeField] AudioClip _walkSoundTerrain;
+    //[SerializeField] AudioClip _walkSoundWood;
+    //[SerializeField] AudioClip _walkSoundStone;
+    //[SerializeField] AudioClip _walkSoundSnow;
 
-    [Header("AUDIO VOLUME")]
-    [Range(0.0f, 1.0f)]
-    [SerializeField] float jumpSoundVolume;
-    [Range(0.0f, 1.0f)]
-    [SerializeField] float walkSoundWoodVolume;
-    [Range(0.0f, 1.0f)]
-    [SerializeField] float walkSoundStoneVolume;
-    [Range(0.0f, 1.0f)]
-    [SerializeField] float walkSoundSnowVolume;
+    //[Header("AUDIO VOLUME")]
+    //[Range(0.0f, 1.0f)]
+    //[SerializeField] float jumpSoundVolume;
+    //[Range(0.0f, 1.0f)]
+    //[SerializeField] float walkSoundWoodVolume;
+    //[Range(0.0f, 1.0f)]
+    //[SerializeField] float walkSoundStoneVolume;
+    //[Range(0.0f, 1.0f)]
+    //[SerializeField] float walkSoundSnowVolume;
 
     [Header("REFERENCES IN SCENE")]
     private Rigidbody2D _rb2D;
@@ -81,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         _rb2D = GetComponent<Rigidbody2D>();
-        lastStepTime = Time.time;
+        //lastStepTime = Time.time;
     }
 
     private void Update()
@@ -89,30 +87,29 @@ public class PlayerMovement : MonoBehaviour
         _time += Time.deltaTime;
         GatherInput();
         
-        //STEPS SOUNDS SCRIPT
-        if (isGrounded && _frameVelocity.magnitude > horizontalDeadZoneThreshold)
-        {
-            RaycastHit walkingHit;
-            //Verifica si tiene la velocidad suficiente desde el último paso
-            if (Time.time - lastStepTime > StepInterval )
-            {
-                if (Physics.Raycast(transform.position,Vector3.down,out walkingHit, 10f))
-                {
-                    if (walkingHit.collider.CompareTag("Terrain"))
-                    {
-                        _audioSource.PlayOneShot(_walkSoundTerrain);
-                        lastStepTime = Time.time;
-                    }
+        ////STEPS SOUNDS SCRIPT
+        //if (isGrounded && _frameVelocity.magnitude > horizontalDeadZoneThreshold)
+        //{
+        //    RaycastHit walkingHit;
+        //    //Verifica si tiene la velocidad suficiente desde el último paso
+        //    if (Time.time - lastStepTime > StepInterval )
+        //    {
+        //        if (Physics.Raycast(transform.position,Vector3.down,out walkingHit, 10f))
+        //        {
+        //            if (walkingHit.collider.CompareTag("Terrain"))
+        //            {
+        //                _audioSource.PlayOneShot(_walkSoundTerrain);
+        //                lastStepTime = Time.time;
+        //            }
 
-                    if (walkingHit.collider.CompareTag("Snow"))
-                    {
+        //            if (walkingHit.collider.CompareTag("Snow"))
+        //            {
                         
-                        lastStepTime = Time.time;
-                    }
-                }
-            }
-            
-        }
+        //                lastStepTime = Time.time;
+        //            }
+        //        }
+        //    }            
+        //}
     }
 
     private void FixedUpdate()
@@ -146,10 +143,14 @@ public class PlayerMovement : MonoBehaviour
     private void CheckCollisions()
     {
         bool groundHit = Physics2D.OverlapCircle(checkGround.position, grounderDistance, groundLayers);
-        bool ceilingHit = Physics2D.OverlapCircle(checkGround.position, grounderDistance, groundLayers);
+        bool ceilingHit = Physics2D.OverlapCircle(checkCeiling.position, grounderDistance, groundLayers); 
 
         // Lógica para colisión en el techo
-        if (ceilingHit) _frameVelocity.y = Mathf.Min(0, _frameVelocity.y);
+        if (ceilingHit)
+        {
+            _frameVelocity.y = Mathf.Min(0, _frameVelocity.y); // Esto ya impide que suba más.
+            _rb2D.velocity = new Vector2(_rb2D.velocity.x, -maxFallSpeed); // Aplica una caída inmediata.
+        }
 
         // Lógica para colisión en el suelo
         if (!isGrounded && groundHit)
@@ -165,7 +166,6 @@ public class PlayerMovement : MonoBehaviour
             _frameLeftGrounded = _time;
         }
     }
-    
 
     private void HandleJump()
     {
@@ -229,11 +229,18 @@ public class PlayerMovement : MonoBehaviour
     
     private void OnDrawGizmos()
     {
+        // Draw a wire sphere to represent the ground check area
         if (checkGround != null)
-        {
-            // Draw a wire sphere to represent the ground check area
+        {            
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(checkGround.position, grounderDistance);
+        }
+
+        // Draw a wire sphere to represent the ceiling check area
+        if (checkCeiling != null)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(checkCeiling.position, grounderDistance);
         }
     }
 }

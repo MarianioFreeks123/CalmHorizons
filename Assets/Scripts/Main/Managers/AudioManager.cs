@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-
 public enum SoundType
 {
     ANCHOR,
@@ -37,15 +36,9 @@ public class AudioManager : MonoBehaviour
 
     private void Awake()
     {
-        if (instance != null && instance != this)
-        {
-            Destroy(this.gameObject);
-        }
-        else
-        {
-            instance = this;
-            DontDestroyOnLoad(this.gameObject); // Mantener el AudioManager entre escenas
-        }
+        if (instance != null && instance != this) Destroy(this.gameObject);
+
+        else instance = this;
     }
 
     public static void PlaySound(SoundType sound, float volume = 1f)
@@ -57,10 +50,8 @@ public class AudioManager : MonoBehaviour
             AudioClip clip = selectedSound.sounds[UnityEngine.Random.Range(0, selectedSound.sounds.Length)];
             instance.soundAudioSource.PlayOneShot(clip, selectedSound.volume * volume);
         }
-        else
-        {
-            Debug.LogWarning("No sounds assigned to " + sound);
-        }
+        else Debug.LogWarning("No sounds assigned to " + sound);
+
     }
 
     public static void PlayMusic(MusicType music, float volume = 1f, bool loop = true)
@@ -74,10 +65,7 @@ public class AudioManager : MonoBehaviour
             instance.musicAudioSource.loop = loop;
             instance.musicAudioSource.Play();
         }
-        else
-        {
-            Debug.LogWarning("No music assigned to " + music);
-        }
+        else Debug.LogWarning("No music assigned to " + music);
     }
 
     public static IEnumerator FadeOutMusic(float fadeTime)
@@ -110,6 +98,9 @@ public class AudioManager : MonoBehaviour
 [Serializable]
 public struct SoundList
 {
+    [Tooltip("Nombre del sonido (para referencia en el inspector)")]
+    public string name;
+
     [Tooltip("Tipo de sonido (debe coincidir con el enum SoundType)")]
     public SoundType type;
 
@@ -129,6 +120,9 @@ public struct SoundList
 [Serializable]
 public struct MusicList
 {
+    [Tooltip("Nombre de la música (para referencia en el inspector)")]
+    public string name;
+
     [Tooltip("Tipo de música (debe coincidir con el enum MusicType)")]
     public MusicType type;
 

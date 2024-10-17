@@ -61,10 +61,7 @@ public class HarpoonBehaviour : MonoBehaviour
         else 
             backCollisionLocation = new Vector3(backCollisionLocation.x - backCollisionGap, backCollisionLocation.y, backCollisionLocation.z);
         
-        backCollision.transform.position = backCollisionLocation;
-
-        //Assign the position of the harpoon in the harpoon manager index
-        harpoonIndexInTheManager = HarpoonManager.instance.nextHarpoonForShoot - 1;
+        backCollision.transform.position = backCollisionLocation;        
 
         //Subscribe to player bend event
         playerMovement.Bend += PlayerIsBending;

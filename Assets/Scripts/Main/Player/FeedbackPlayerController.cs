@@ -27,11 +27,13 @@ public class FeedbackPlayerController : MonoBehaviour
     //Void that generate smoke particles when player shoot
     private void GenerateSmokeParticles() 
     {
-        if(playerMovement.playerIsLookingLeft) shootFeedbackTransform.position = shootFeedbackPositions[0].position;
-        else shootFeedbackTransform.position = shootFeedbackPositions[1].position;
+        //Player have enough ammo
+        if (HarpoonManager.instance.ammo > 0)
+        {
+            if (playerMovement.playerIsLookingLeft) shootFeedbackTransform.position = shootFeedbackPositions[0].position;
+            else shootFeedbackTransform.position = shootFeedbackPositions[1].position;
 
-        shootFeedback.PlayFeedbacks();
+            shootFeedback.PlayFeedbacks();
+        }        
     }
-
-
 }

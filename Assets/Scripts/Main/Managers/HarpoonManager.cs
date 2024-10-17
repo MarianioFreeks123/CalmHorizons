@@ -7,15 +7,14 @@ public class HarpoonManager : MonoBehaviour
     public static HarpoonManager instance;
 
     [Header("PARAMETERS")]
-    [SerializeField] int maxNumberOfHarpoons;
+    [SerializeField] int maxNumberOfHarpoons; //Max number of harpoons
 
     [Header("REFERENCES IN PROYECT")]
     [SerializeField] private GameObject harpoon;
     [SerializeField] private GameObject fakeHarpoon;
 
     [Header("CHECKERS")]
-    [SerializeField] private List<GameObject> harpoons = new List<GameObject>(); //Need to start with 
-    public int nextHarpoonForShoot;
+    public int ammo; //Actual number of harpoons
 
     private Transform shootPoint; 
     private HarpoonLauncher harpoonLauncher;
@@ -29,12 +28,6 @@ public class HarpoonManager : MonoBehaviour
         }
 
         else instance = this;
-
-        //Assign harpoons empty spaces to the list size
-        for (int i = 0; i < maxNumberOfHarpoons; i++)
-        {
-            harpoons.Add(null);
-        }
     }
 
     void Start()
@@ -45,43 +38,39 @@ public class HarpoonManager : MonoBehaviour
 
         //Subscribe shoot event
         harpoonLauncher.ShootHarpoon += FireHarpoon;
+
+        //Set the ammo as the maximum number of harpoons player is able to have
+        ammo = maxNumberOfHarpoons;
     }
 
     private void FireHarpoon()
     {
-        //Reset the counter when the maximun number of harpoons is reached
-        if (nextHarpoonForShoot > maxNumberOfHarpoons - 1) nextHarpoonForShoot = 0;
-        
-        //Instantiate the harpoon
-        GameObject harpoonShooted = Instantiate(harpoon, shootPoint.position, Quaternion.identity);
+        //Player have ammo
+        if (ammo > 0)
+        {
+            ammo--;
 
-        //Assign a parent for order propouses
-        harpoonShooted.transform.parent = GameObject.Find("*NC*_HarpoonParent").transform;
+            //Instantiate the harpoon
+            GameObject harpoonShooted = Instantiate(harpoon, shootPoint.position, Quaternion.identity);
 
-        if (harpoons[nextHarpoonForShoot] != null) Destroy(harpoons[nextHarpoonForShoot]);
-        harpoons[nextHarpoonForShoot] = harpoonShooted;
+            //Assign a parent for order propouses
+            harpoonShooted.transform.parent = GameObject.Find("*NC*_HarpoonParent").transform;
 
-        //Change the name of the harpoon for debug settings
-        harpoonShooted.name = $"harpoon{nextHarpoonForShoot}";
+            //Change the name of the harpoon for debug settings
+            harpoonShooted.name = $"harpoon{ammo}";
+        }
 
-        //Update the harpoon index
-        nextHarpoonForShoot++;
+        //Player dont have ammo
+        else
+        {
+            Debug.Log("You dont have any ammo left");
+        }       
     }
 
     private void OnDisable()
     {
         //Des-subscribe shoot event
         harpoonLauncher.ShootHarpoon -= FireHarpoon;
-    }
-
-    public void DestroyHarpoon(int harpoonToRemove)
-    {
-        harpoons.RemoveAt(harpoonToRemove);
-
-        //Update the index
-        nextHarpoonForShoot--;
-
-        harpoons.Add(null);
     }
 
     public void GenerateFakeHarpoon(Collision2D collision, HarpoonBehaviour destroyedHarpoonBehaviour, Transform spawnTransform)
@@ -92,6 +81,5 @@ public class HarpoonManager : MonoBehaviour
         fakeHarpoonInstance.transform.parent = GameObject.Find("*NC*_FakeHarpoonParent").transform;
 
         Destroy(collision.gameObject);
-        DestroyHarpoon(destroyedHarpoonBehaviour.harpoonIndexInTheManager);
     }
 }
