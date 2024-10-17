@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class HarpoonBackCollision : MonoBehaviour
@@ -14,7 +15,10 @@ public class HarpoonBackCollision : MonoBehaviour
 
         if (harpoonBehaviour.isHarpoonAnchored() && collision.transform.CompareTag("Harpoon"))
         {
-            HarpoonManager.instance.GenerateFakeHarpoon(collision, destroyedHarpoonBehaviour, transform);
+            //Direction that the fake harpoon will bounce
+            float fakeHarpoonBounceDirection = -harpoonBehaviour.direction.x;
+
+            HarpoonManager.instance.GenerateFakeHarpoon(collision, destroyedHarpoonBehaviour, transform, fakeHarpoonBounceDirection);
         }        
     }
 }

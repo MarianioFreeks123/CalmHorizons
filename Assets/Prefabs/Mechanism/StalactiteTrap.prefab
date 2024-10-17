@@ -120,6 +120,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67db5cbf3bba46c4587e3f9b7db73e10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fakeHarpoonLayerMask:
+    serializedVersion: 2
+    m_Bits: 512
+  detector: {fileID: 1640964187018087591}
 --- !u!1 &1354584128226801681
 GameObject:
   m_ObjectHideFlags: 0

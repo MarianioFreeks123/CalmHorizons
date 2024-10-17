@@ -5,8 +5,8 @@ using UnityEngine;
 public class FakeHarpoonBehaviour : MonoBehaviour
 {
     [Header("PARAMETERS")]
-    [SerializeField] private float minHorizontalForce;
-    [SerializeField] private float maxHorizontalForce;
+    [SerializeField, Range (1f, 10f)] private float minHorizontalForce;
+    [SerializeField, Range (1f, 10f)] private float maxHorizontalForce;
 
     [SerializeField] private float minVerticalForce;
     [SerializeField] private float maxVerticalForce;
@@ -20,6 +20,9 @@ public class FakeHarpoonBehaviour : MonoBehaviour
 
     [Header("REFERENCES IN SCENE")]
     [SerializeField] private SpriteRenderer spriteRenderer;
+
+    [Header("CHECKERS")]
+    public float bounceDirection;
 
     private BoxCollider2D _boxCollider;
     private Rigidbody2D _rb;
@@ -40,7 +43,10 @@ public class FakeHarpoonBehaviour : MonoBehaviour
 
     private void ApplyImpulse()
     {
+        //Decide the strenght of the intial force and the oposite direction of the collision
         float randomHorizontalForce = Random.Range(minHorizontalForce, maxHorizontalForce);
+        randomHorizontalForce *= -bounceDirection;
+
         float randomVerticalForce = Random.Range(minVerticalForce, maxVerticalForce);
 
         Vector2 impulse = new Vector2(randomHorizontalForce, randomVerticalForce);

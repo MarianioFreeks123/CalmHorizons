@@ -13,6 +13,7 @@ public class HarpoonBehaviour : MonoBehaviour
     [Header("CHECKERS")]
     [SerializeField] private bool hasCollidedWithTerrain;
     public int harpoonIndexInTheManager;
+    public Vector2 direction;
 
     [Header("REFERENCES IN SCENE")]
     [SerializeField] private SpriteRenderer spriteRenderer;
@@ -23,9 +24,7 @@ public class HarpoonBehaviour : MonoBehaviour
     private PlayerMovement playerMovement;
     private BoxCollider2D _boxCollider;
     private Transform playerTransform;
-    private Transform playerFoots;
-
-    private Vector2 direction;
+    private Transform playerFoots;    
 
     private bool playerIsInContactWithTheHarpoon;
 

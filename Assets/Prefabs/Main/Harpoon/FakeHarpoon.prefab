@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minHorizontalForce: -8
-  maxHorizontalForce: 8
+  maxHorizontalForce: -1
   minVerticalForce: 5
   maxVerticalForce: 7
   minRotation: -360

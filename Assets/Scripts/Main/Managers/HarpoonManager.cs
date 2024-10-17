@@ -73,12 +73,13 @@ public class HarpoonManager : MonoBehaviour
         harpoonLauncher.ShootHarpoon -= FireHarpoon;
     }
 
-    public void GenerateFakeHarpoon(Collision2D collision, HarpoonBehaviour destroyedHarpoonBehaviour, Transform spawnTransform)
+    public void GenerateFakeHarpoon(Collision2D collision, HarpoonBehaviour destroyedHarpoonBehaviour, Transform spawnTransform, float bounceDirection)
     {
         GameObject fakeHarpoonInstance = Instantiate(fakeHarpoon, spawnTransform.position, Quaternion.identity);
 
         //Assign a parent for order propouses
         fakeHarpoonInstance.transform.parent = GameObject.Find("*NC*_FakeHarpoonParent").transform;
+        fakeHarpoonInstance.GetComponent<FakeHarpoonBehaviour>().bounceDirection = bounceDirection;
 
         Destroy(collision.gameObject);
     }
