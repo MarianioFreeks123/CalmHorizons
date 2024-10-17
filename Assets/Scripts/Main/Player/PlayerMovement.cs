@@ -10,15 +10,15 @@ public class PlayerMovement : MonoBehaviour
     [Header("INPUT")]
     [Tooltip("Makes all input snap to an integer. Prevents gamepads from walking slowly.")]
     [SerializeField] bool snapInput = true;
-    [SerializeField][Range(0.01f, 0.99f)] float horizontalDeadZoneThreshold = 0.1f;
-    [SerializeField][Range(0.01f, 0.99f)] float verticalDeadZoneThreshold = 0.3f;
+    [SerializeField, Range(0.01f, 0.99f)] float horizontalDeadZoneThreshold = 0.1f;
+    [SerializeField, Range(0.01f, 0.99f)] float verticalDeadZoneThreshold = 0.3f;
 
     [Header("MOVEMENT")]
     [SerializeField] float maxSpeed = 14f;
     [SerializeField] float acceleration = 120f;
-    [SerializeField] float groundDeceleration = 60f;
+    public float groundDeceleration = 60f;
     [SerializeField] float airDeceleration = 30f;
-    [SerializeField][Range(0f, -10f)] float groundingForce = -1.5f;
+    [SerializeField, Range(0f, -10f)] float groundingForce = -1.5f;
     //[SerializeField] private float lastStepTime;
     //[SerializeField] private float StepInterval = 0.5f;
 
