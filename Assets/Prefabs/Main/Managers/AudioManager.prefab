@@ -174,8 +174,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48e029f5d2ae9634f9a1862a446f7236, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  soundList: []
-  musicList: []
+  soundList:
+  - name: WalkingSounds
+    type: 0
+    volume: 0
+    sounds: []
+    loop: 0
+    playOnAwake: 0
+  musicList:
+  - name: MainMenuTheme
+    type: 0
+    volume: 0
+    musicClip: {fileID: 0}
+    loop: 0
+    playOnAwake: 0
   soundAudioSource: {fileID: 5491472735233240357}
   musicAudioSource: {fileID: 829501149997654135}
 --- !u!1 &7957330484233046842

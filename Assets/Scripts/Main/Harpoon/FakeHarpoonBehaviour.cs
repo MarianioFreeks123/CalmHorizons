@@ -8,6 +8,8 @@ public class FakeHarpoonBehaviour : MonoBehaviour
     [SerializeField, Range (1f, 10f)] private float minHorizontalForce;
     [SerializeField, Range (1f, 10f)] private float maxHorizontalForce;
 
+    [SerializeField, Range(0f, 1f)] private float substractBounceFriction;
+
     [SerializeField] private float minVerticalForce;
     [SerializeField] private float maxVerticalForce;
 
@@ -16,7 +18,7 @@ public class FakeHarpoonBehaviour : MonoBehaviour
 
     [SerializeField] private float timeForDissapear;
     [SerializeField] private float timeForEnableCollision;
-    [SerializeField] private float fadeDuration;
+    [SerializeField] private float fadeDuration;    
 
     [Header("REFERENCES IN SCENE")]
     [SerializeField] private SpriteRenderer spriteRenderer;
@@ -69,6 +71,9 @@ public class FakeHarpoonBehaviour : MonoBehaviour
             StartCoroutine(StartFadeOut());
         }
     }
+
+    //Speed reduction
+    private void OnCollisionEnter2D(Collision2D collision) => _rb.velocity = _rb.velocity* substractBounceFriction;
 
     IEnumerator StartFadeOut()
     {

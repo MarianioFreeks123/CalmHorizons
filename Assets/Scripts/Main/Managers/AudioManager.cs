@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 public enum SoundType
 {
+    WALKINGSOUNDS,
     ANCHOR,
     JUMP,
     DEATH,
