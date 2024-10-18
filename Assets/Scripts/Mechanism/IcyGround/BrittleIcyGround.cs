@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IceFloor : MonoBehaviour
+public class BrittleIcyGround : IceFloor
 {
-    [Header("PARAMETERS")]
-    public float icyDeceleration;
-    public float playerGroundDeceleration;
+    public enum IceStates { Perfect, Damage, Broken };
+
+    [Header("CHECKERS")]
+    [SerializeField] IceStates iceStates;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -24,12 +25,5 @@ public class IceFloor : MonoBehaviour
         {
             ModifyPlayersFriction(collision, playerGroundDeceleration);
         }
-    }
-
-    public void ModifyPlayersFriction(Collision2D collision, float newFriction)
-    {
-        PlayerMovement playerMovement = collision.transform.GetComponent<PlayerMovement>();
-
-        if (playerMovement != null) playerMovement.groundDeceleration = newFriction;
     }
 }

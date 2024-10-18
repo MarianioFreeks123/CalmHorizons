@@ -45,7 +45,7 @@ public class FakeHarpoonBehaviour : MonoBehaviour
     {
         //Decide the strenght of the intial force and the oposite direction of the collision
         float randomHorizontalForce = Random.Range(minHorizontalForce, maxHorizontalForce);
-        randomHorizontalForce *= -bounceDirection;
+        randomHorizontalForce *= bounceDirection;
 
         float randomVerticalForce = Random.Range(minVerticalForce, maxVerticalForce);
 

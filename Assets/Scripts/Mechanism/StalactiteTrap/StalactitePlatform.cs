@@ -31,7 +31,7 @@ public class StalactitePlatform : MonoBehaviour
     {
         if (collision.transform.CompareTag("Player")) collision.transform.SetParent(transform, true);
 
-        if (collision.transform.CompareTag("Harpoon"))
+        else if (collision.transform.CompareTag("Harpoon"))
         {
             HarpoonBehaviour destroyedHarpoonBehaviour = collision.transform.GetComponent<HarpoonBehaviour>();
 
